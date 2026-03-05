@@ -1,0 +1,584 @@
+/* ════════════════════════════════════════════════════════════
+   回答入力システム — styles.css
+   Design: Brutalist × Avant-garde Editorial × Neon Accent
+   ════════════════════════════════════════════════════════════ */
+
+/* ── Design tokens ─────────────────────────────────────────── */
+:root {
+  --bg:          #080808;
+  --bg-card:     #0d0d0d;
+  --bg-input:    #101010;
+  --bg-host:     #090910;
+  --text:        #e2e2e2;
+  --text-dim:    #666;
+  --text-dark:   #333;
+  --lime:        #aaff00;
+  --magenta:     #ff00cc;
+  --border:      #191919;
+  --border-md:   #252525;
+}
+
+/* ── Reset ──────────────────────────────────────────────────── */
+*, *::before, *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+/* ── Base ───────────────────────────────────────────────────── */
+body {
+  background-color: var(--bg);
+  /* Subtle dot grid — avant-garde graph-paper feel */
+  background-image: radial-gradient(circle, #1a1a1a 1px, transparent 1px);
+  background-size: 22px 22px;
+  color: var(--text);
+  font-family:
+    'Helvetica Neue', Helvetica, Arial,
+    'Hiragino Kaku Gothic ProN', 'Hiragino Sans',
+    'Noto Sans JP', 'Yu Gothic', sans-serif;
+  line-height: 1.65;
+  min-height: 100vh;
+  overflow-x: hidden;
+  position: relative;
+}
+
+/* ── Grain / noise overlay ──────────────────────────────────── */
+.grain {
+  position: fixed;
+  inset: 0;
+  z-index: 1000;
+  pointer-events: none;
+  opacity: 0.045;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='300'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='300' height='300' filter='url(%23n)'/%3E%3C/svg%3E");
+  background-repeat: repeat;
+  background-size: 300px 300px;
+}
+
+/* ── Side decoration label ──────────────────────────────────── */
+.side-label {
+  position: fixed;
+  left: -0.25rem;
+  top: 50%;
+  transform: translateY(-50%) rotate(-90deg);
+  transform-origin: center center;
+  font-size: 0.45rem;
+  letter-spacing: 0.55em;
+  text-transform: uppercase;
+  color: rgba(170, 255, 0, 0.1);
+  pointer-events: none;
+  user-select: none;
+  white-space: nowrap;
+}
+
+/* ════════════════════════════════════════════════════════════
+   LAYOUT
+   ════════════════════════════════════════════════════════════ */
+
+.container {
+  max-width: 760px;
+  /* Right-biased asymmetry on wide screens */
+  margin: 0 auto;
+  padding: 2.5rem 1.25rem 5rem;
+}
+
+@media (min-width: 900px) {
+  .container {
+    margin: 0 5vw 0 auto;
+    padding: 3.5rem 2.5rem 6rem;
+  }
+}
+
+/* ════════════════════════════════════════════════════════════
+   HEADER
+   ════════════════════════════════════════════════════════════ */
+
+.site-header {
+  margin-bottom: 3rem;
+  padding-bottom: 2rem;
+  border-bottom: 1px solid var(--border-md);
+  position: relative;
+}
+
+/* Neon lime left-rail accent */
+.site-header::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -1.25rem;
+  width: 3px;
+  height: 100%;
+  background: linear-gradient(to bottom, var(--lime), transparent);
+}
+
+/* Radial glow behind title */
+.site-header::after {
+  content: '';
+  position: absolute;
+  top: -3rem;
+  left: -3rem;
+  width: 30vw;
+  height: 200px;
+  background: radial-gradient(ellipse at top left, rgba(170,255,0,0.05) 0%, transparent 70%);
+  pointer-events: none;
+  z-index: -1;
+}
+
+.eyebrow {
+  font-size: 0.5rem;
+  letter-spacing: 0.55em;
+  text-transform: uppercase;
+  color: var(--lime);
+  font-weight: 700;
+  margin-bottom: 0.9rem;
+  opacity: 0.8;
+}
+
+.site-title {
+  font-size: clamp(3.5rem, 13vw, 7rem);
+  font-weight: 900;
+  line-height: 0.85;
+  letter-spacing: -0.04em;
+  color: var(--text);
+  /* Aggressive editorial tracking */
+}
+
+/* ════════════════════════════════════════════════════════════
+   FORM SECTION
+   ════════════════════════════════════════════════════════════ */
+
+.form-section {
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+  margin-bottom: 2.5rem;
+}
+
+.field-group {
+  display: flex;
+  flex-direction: column;
+  gap: 0.45rem;
+}
+
+.field-label {
+  font-size: 0.6rem;
+  letter-spacing: 0.45em;
+  text-transform: uppercase;
+  color: var(--lime);
+  font-weight: 700;
+}
+
+.field-label--magenta {
+  color: var(--magenta);
+}
+
+/* ── Inputs ─────────────────────────────────────────────────── */
+input[type="text"],
+input[type="password"],
+textarea {
+  background: var(--bg-input);
+  border: 1px solid var(--border-md);
+  border-left: 3px solid var(--lime);
+  color: var(--text);
+  padding: 0.8rem 1rem;
+  width: 100%;
+  font-family: inherit;
+  font-size: 1rem;
+  transition: border-color 150ms ease, background 150ms ease;
+  appearance: none;
+  -webkit-appearance: none;
+  border-radius: 0;
+  resize: vertical;
+}
+
+#pin-input {
+  border-left-color: var(--magenta);
+}
+
+input:focus,
+textarea:focus {
+  outline: none;
+  border-color: var(--lime);
+  background: #141414;
+  box-shadow: inset 0 0 0 1px rgba(170,255,0,0.08);
+}
+
+#pin-input:focus {
+  border-color: var(--magenta);
+  box-shadow: inset 0 0 0 1px rgba(255,0,204,0.08);
+}
+
+input::placeholder,
+textarea::placeholder {
+  color: var(--text-dark);
+}
+
+/* ── Messages ────────────────────────────────────────────────── */
+.error-msg {
+  font-size: 0.75rem;
+  color: var(--magenta);
+  letter-spacing: 0.06em;
+  min-height: 1.25em;
+  font-weight: 600;
+}
+
+.success-msg {
+  font-size: 0.75rem;
+  color: var(--lime);
+  letter-spacing: 0.06em;
+  min-height: 1.25em;
+  font-weight: 600;
+}
+
+/* ════════════════════════════════════════════════════════════
+   BUTTONS — angular, chamfered, "変態的"
+   ════════════════════════════════════════════════════════════ */
+
+.btn {
+  display: inline-block;
+  padding: 0.85rem 1.75rem;
+  font-family: inherit;
+  font-size: 0.75rem;
+  font-weight: 900;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  cursor: pointer;
+  border: 2px solid;
+  background: transparent;
+  transition:
+    background 130ms ease,
+    color 130ms ease,
+    transform 70ms ease;
+  /* Chamfered corners — brutalist angular aesthetic */
+  clip-path: polygon(
+    0 0,
+    calc(100% - 10px) 0,
+    100% 10px,
+    100% 100%,
+    10px 100%,
+    0 calc(100% - 10px)
+  );
+  -webkit-clip-path: polygon(
+    0 0,
+    calc(100% - 10px) 0,
+    100% 10px,
+    100% 100%,
+    10px 100%,
+    0 calc(100% - 10px)
+  );
+}
+
+.btn:active:not(:disabled) {
+  transform: translate(2px, 2px);
+}
+
+/* Primary (lime) */
+.btn-primary {
+  border-color: var(--lime);
+  color: var(--lime);
+  align-self: flex-start;
+}
+.btn-primary:hover:not(:disabled) {
+  background: var(--lime);
+  color: #060606;
+}
+
+/* Accent (lime, for toggle) */
+.btn-accent {
+  border-color: var(--lime);
+  color: var(--lime);
+}
+.btn-accent:hover:not(:disabled) {
+  background: var(--lime);
+  color: #060606;
+}
+
+/* Danger (magenta, for delete) */
+.btn-danger {
+  border-color: var(--magenta);
+  color: var(--magenta);
+}
+.btn-danger:hover:not(:disabled) {
+  background: var(--magenta);
+  color: #060606;
+}
+
+/* Disabled — "封印" (sealed) look */
+.btn:disabled {
+  border-color: var(--text-dark) !important;
+  color: var(--text-dark) !important;
+  background: transparent !important;
+  cursor: not-allowed;
+  /* Remove the clip-path so the hatch fill is visible at edges */
+  clip-path: none !important;
+  -webkit-clip-path: none !important;
+  position: relative;
+  overflow: hidden;
+}
+
+/* Diagonal-hatch overlay on disabled state */
+.btn:disabled::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background-image: repeating-linear-gradient(
+    -45deg,
+    transparent 0,
+    transparent 4px,
+    rgba(80,80,80,0.15) 4px,
+    rgba(80,80,80,0.15) 5px
+  );
+  pointer-events: none;
+}
+
+/* ════════════════════════════════════════════════════════════
+   HOST SECTION
+   ════════════════════════════════════════════════════════════ */
+
+.host-section {
+  border: 1px solid var(--border);
+  border-top: 2px solid var(--magenta);
+  padding: 1.5rem;
+  background: var(--bg-host);
+  margin-bottom: 3rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+  position: relative;
+}
+
+/* Subtle magenta glow in top-left */
+.host-section::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 120px;
+  height: 60px;
+  background: radial-gradient(ellipse at top left, rgba(255,0,204,0.06) 0%, transparent 80%);
+  pointer-events: none;
+}
+
+.host-header {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  flex-wrap: wrap;
+}
+
+.host-badge {
+  font-size: 0.5rem;
+  letter-spacing: 0.5em;
+  text-transform: uppercase;
+  color: var(--magenta);
+  font-weight: 700;
+  border: 1px solid var(--magenta);
+  padding: 0.2rem 0.6rem;
+  opacity: 0.85;
+}
+
+.host-badge-ja {
+  font-size: 0.65rem;
+  color: var(--text-dim);
+}
+
+.host-actions {
+  display: flex;
+  gap: 1rem;
+  flex-wrap: wrap;
+}
+
+/* ════════════════════════════════════════════════════════════
+   RESPONSE SECTION
+   ════════════════════════════════════════════════════════════ */
+
+.response-section {
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+}
+
+.section-header {
+  display: flex;
+  align-items: baseline;
+  gap: 1rem;
+  border-bottom: 1px solid var(--border-md);
+  padding-bottom: 0.75rem;
+}
+
+.section-title {
+  font-size: clamp(1.1rem, 4vw, 1.6rem);
+  font-weight: 900;
+  letter-spacing: -0.02em;
+  color: var(--text);
+}
+
+.count-badge {
+  font-size: 0.55rem;
+  letter-spacing: 0.35em;
+  color: var(--lime);
+  font-weight: 700;
+  text-transform: uppercase;
+}
+
+.response-list {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.empty-state {
+  color: var(--text-dark);
+  font-size: 0.8rem;
+  letter-spacing: 0.12em;
+  padding: 3rem 0;
+  text-align: center;
+  text-transform: uppercase;
+}
+
+/* ════════════════════════════════════════════════════════════
+   RESPONSE CARD — editorial, "作品っぽく"
+   ════════════════════════════════════════════════════════════ */
+
+.response-card {
+  border: 1px solid var(--border);
+  border-left: 3px solid var(--lime);
+  padding: 1.25rem 1.25rem 1.25rem 1.5rem;
+  background: var(--bg-card);
+  position: relative;
+  transition: border-left-color 200ms ease;
+  role: listitem;
+}
+
+.response-card:hover {
+  border-left-color: var(--magenta);
+}
+
+/* Card number — #001, #002 … */
+.card-num {
+  display: block;
+  font-size: 0.55rem;
+  letter-spacing: 0.35em;
+  color: var(--lime);
+  font-weight: 700;
+  margin-bottom: 0.5rem;
+  font-variant-numeric: tabular-nums;
+  text-transform: uppercase;
+  transition: color 200ms ease;
+}
+
+.response-card:hover .card-num {
+  color: var(--magenta);
+}
+
+/* Name — prominent */
+.card-name {
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: var(--text);
+  margin-bottom: 0.8rem;
+  letter-spacing: -0.01em;
+}
+
+/* ─── Answer: base ──────────────────────────────────────────── */
+.card-answer {
+  transition: opacity 250ms ease;
+}
+
+/* ─── Answer: HIDDEN — diagonal hatch blind ─────────────────── */
+.card-answer.hidden {
+  min-height: 4rem;
+  position: relative;
+  overflow: hidden;
+  /* Neon lime diagonal stripe pattern */
+  background: repeating-linear-gradient(
+    -55deg,
+    rgba(170, 255, 0, 0.07)  0px,
+    rgba(170, 255, 0, 0.07)  1px,
+    transparent               1px,
+    transparent               10px
+  );
+  border: 1px solid rgba(170, 255, 0, 0.1);
+}
+
+/* Label overlaid on the blind */
+.card-answer.hidden::before {
+  content: 'HIDDEN  ·  回答は非表示';
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.48rem;
+  letter-spacing: 0.5em;
+  text-transform: uppercase;
+  color: rgba(170, 255, 0, 0.3);
+  font-weight: 700;
+  pointer-events: none;
+  /* CSS "display: flex" doesn't work on ::before; use text-align + padding */
+  display: block;
+  text-align: center;
+  padding-top: 1.3rem;
+}
+
+/* ─── Answer: REVEALED — animated fade-in ───────────────────── */
+.card-answer.revealed {
+  color: #ccc;
+  font-size: 0.95rem;
+  line-height: 1.75;
+  white-space: pre-wrap;
+  word-break: break-word;
+  animation: revealIn 250ms ease forwards;
+}
+
+@keyframes revealIn {
+  from {
+    opacity: 0;
+    transform: translateY(4px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* ════════════════════════════════════════════════════════════
+   RESPONSIVE / MOBILE
+   ════════════════════════════════════════════════════════════ */
+
+@media (max-width: 480px) {
+  .site-title {
+    font-size: clamp(3rem, 18vw, 5rem);
+  }
+
+  .host-actions {
+    flex-direction: column;
+  }
+
+  .btn {
+    padding: 0.8rem 1.25rem;
+    font-size: 0.7rem;
+  }
+
+  /* Hide side label on tiny screens */
+  .side-label {
+    display: none;
+  }
+}
+
+/* ════════════════════════════════════════════════════════════
+   UTILITY
+   ════════════════════════════════════════════════════════════ */
+
+/* Prevent FOUC before JS runs */
+@media (prefers-reduced-motion: reduce) {
+  .card-answer.revealed {
+    animation: none;
+  }
+  * {
+    transition-duration: 0.01ms !important;
+  }
+}

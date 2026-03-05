@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="回答入力・共有システム">
+  <title>回答入力</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+  <!-- Grain/noise overlay -->
+  <div class="grain" aria-hidden="true"></div>
+
+  <!-- Vertical side decoration -->
+  <span class="side-label" aria-hidden="true">RESPONSES // 回答一覧システム // LIVE</span>
+
+  <div class="container">
+
+    <!-- ══ HEADER ══════════════════════════════════════════ -->
+    <header class="site-header">
+      <p class="eyebrow">ANSWER INPUT SYSTEM // REAL-TIME SYNC</p>
+      <h1 class="site-title">回答<br>入力</h1>
+    </header>
+
+    <main>
+
+      <!-- ══ FORM ════════════════════════════════════════════ -->
+      <section class="form-section" aria-label="回答入力フォーム">
+
+        <div class="field-group">
+          <label class="field-label" for="name-input">入力者名</label>
+          <input
+            type="text"
+            id="name-input"
+            placeholder="あなたの名前"
+            autocomplete="name"
+            maxlength="50"
+          >
+        </div>
+
+        <div class="field-group">
+          <label class="field-label" for="answer-input">回答</label>
+          <textarea
+            id="answer-input"
+            rows="4"
+            placeholder="ここに回答を入力してください…"
+            maxlength="1000"
+          ></textarea>
+        </div>
+
+        <p class="error-msg"  id="error-msg"   role="alert"      aria-live="assertive"></p>
+        <p class="success-msg" id="success-msg" aria-live="polite"></p>
+
+        <button class="btn btn-primary" id="submit-btn">送信</button>
+
+      </section>
+
+      <!-- ══ HOST CONTROL ════════════════════════════════════ -->
+      <section class="host-section" aria-label="主催者操作">
+
+        <div class="host-header">
+          <span class="host-badge">HOST CONTROL</span>
+          <span class="host-badge-ja">主催者操作エリア</span>
+        </div>
+
+        <div class="field-group">
+          <label class="field-label field-label--magenta" for="pin-input">主催者PIN</label>
+          <input
+            type="password"
+            id="pin-input"
+            placeholder="••••"
+            maxlength="20"
+            autocomplete="off"
+          >
+        </div>
+
+        <div class="host-actions">
+          <button class="btn btn-accent" id="toggle-btn"    disabled>回答をすべて表示</button>
+          <button class="btn btn-danger" id="delete-all-btn" disabled>全削除（主催者）</button>
+        </div>
+
+      </section>
+
+      <!-- ══ RESPONSE LIST ═══════════════════════════════════ -->
+      <section class="response-section" aria-label="投稿一覧">
+
+        <div class="section-header">
+          <h2 class="section-title">投稿一覧</h2>
+          <span class="count-badge" id="count-display" aria-live="polite">— 件</span>
+        </div>
+
+        <div id="response-list" class="response-list" role="list">
+          <!-- Rendered by app.js -->
+          <p class="empty-state">まだ投稿がありません</p>
+        </div>
+
+      </section>
+
+    </main>
+
+  </div><!-- /.container -->
+
+  <script type="module" src="app.js"></script>
+</body>
+</html>
