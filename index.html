@@ -56,6 +56,34 @@
         <button class="btn btn-primary" id="submit-btn" type="button">送信</button>
 
       </section>
+
+      <!-- 回答確認（PIN認証） -->
+      <section class="view-section" aria-label="回答確認">
+        <div class="view-section-header">
+          <h2 class="view-section-title">回答を確認する</h2>
+        </div>
+
+        <div class="field-group">
+          <label class="field-label field-label--pin" for="view-pin-input">PIN番号</label>
+          <input
+            type="password"
+            id="view-pin-input"
+            placeholder="••••"
+            maxlength="20"
+            autocomplete="off"
+          >
+        </div>
+
+        <div class="view-controls">
+          <button class="btn btn-accent" id="view-toggle-btn" disabled>回答をすべて表示</button>
+          <span class="count-badge" id="view-count-display" aria-live="polite">— 件</span>
+        </div>
+
+        <div id="view-grouped-list">
+          <p class="empty-state">PINを入力してください</p>
+        </div>
+      </section>
+
     </main>
 
   </div>

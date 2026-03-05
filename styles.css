@@ -1,23 +1,27 @@
 /* ════════════════════════════════════════════════════════════
    回答入力システム — styles.css
-   Design: 昭和クイズ番組風
+   Design: 昭和クイズ番組風（明るく元気なカラー）
    ════════════════════════════════════════════════════════════ */
 
 /* ── Design tokens ─────────────────────────────────────────── */
 :root {
-  --bg:          #0b0d1c;        /* 深いネイビー */
-  --bg-card:     #12152e;
-  --bg-input:    #0e1025;
-  --bg-host:     #1a0d1a;        /* 紫みがかったホストエリア */
-  --text:        #f2eedc;        /* 温かいオフホワイト */
-  --text-dim:    #9090b0;
-  --text-dark:   #3a3a5a;
-  --red:         #d42020;        /* クイズ番組の赤 */
-  --gold:        #f0c030;        /* 金色アクセント */
-  --blue-light:  #4a8cff;        /* 解答パネルの青 */
-  --border:      #1e2140;
-  --border-md:   #2a2e56;
-  --border-gold: #6a5010;
+  --bg:          #fdf6e3;        /* 温かいクリーム */
+  --bg-card:     #ffffff;
+  --bg-input:    #fffaf0;
+  --bg-host:     #fff5f8;        /* ピンクみがかったエリア */
+  --text:        #1a1000;        /* 濃いこげ茶 */
+  --text-dim:    #666655;
+  --text-dark:   #bbbbaa;
+  --red:         #cc1a00;        /* クイズ番組の赤 */
+  --red-dark:    #991400;
+  --gold:        #c47d00;        /* 金色アクセント */
+  --gold-bright: #f0a800;
+  --blue:        #1a4faa;        /* 解答パネルの青 */
+  --blue-bright: #2a6fd4;
+  --border:      #e8dfc0;
+  --border-md:   #d4c088;
+  --border-gold: #c47d00;
+  --header-bg:   #cc1a00;
 }
 
 /* ── Reset ──────────────────────────────────────────────────── */
@@ -35,9 +39,20 @@ html {
 body {
   background-color: var(--bg);
   background-image:
-    linear-gradient(rgba(255,255,255,0.015) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(255,255,255,0.015) 1px, transparent 1px);
-  background-size: 40px 40px;
+    repeating-linear-gradient(
+      0deg,
+      transparent,
+      transparent 39px,
+      rgba(196, 125, 0, 0.06) 39px,
+      rgba(196, 125, 0, 0.06) 40px
+    ),
+    repeating-linear-gradient(
+      90deg,
+      transparent,
+      transparent 39px,
+      rgba(196, 125, 0, 0.06) 39px,
+      rgba(196, 125, 0, 0.06) 40px
+    );
   color: var(--text);
   font-family:
     'Hiragino Kaku Gothic ProN', 'Hiragino Sans',
@@ -47,10 +62,7 @@ body {
   overflow-x: hidden;
 }
 
-/* grain は使わない（.grain要素はHTMLにあるが非表示） */
 .grain { display: none; }
-
-/* side label は非表示 */
 .side-label { display: none; }
 
 /* ════════════════════════════════════════════════════════════
@@ -70,46 +82,50 @@ body {
 }
 
 /* ════════════════════════════════════════════════════════════
-   HEADER — 番組タイトル風
+   HEADER — 昭和番組タイトル風（赤地に金文字）
    ════════════════════════════════════════════════════════════ */
 
 .site-header {
   margin-bottom: 2.5rem;
   text-align: center;
   padding: 2rem 1.5rem 1.75rem;
-  border: 3px double var(--gold);
-  background: linear-gradient(180deg, #0f1228 0%, #0b0d1c 100%);
+  background: var(--header-bg);
+  border: 4px double #ffd700;
+  box-shadow:
+    0 4px 0 var(--red-dark),
+    0 6px 16px rgba(204, 26, 0, 0.35);
   position: relative;
 }
 
-/* コーナー装飾 */
 .site-header::before,
 .site-header::after {
-  content: '◆';
+  content: '★';
   position: absolute;
-  color: var(--gold);
-  font-size: 0.75rem;
-  opacity: 0.7;
+  color: #ffd700;
+  font-size: 1rem;
+  opacity: 0.9;
 }
-.site-header::before { top: 0.4rem; left: 0.6rem; }
-.site-header::after  { bottom: 0.4rem; right: 0.6rem; }
+.site-header::before { top: 0.5rem; left: 0.75rem; }
+.site-header::after  { bottom: 0.5rem; right: 0.75rem; }
 
 .eyebrow {
   font-size: 0.65rem;
   letter-spacing: 0.3em;
-  color: var(--gold);
+  color: #ffd700;
   font-weight: 700;
   margin-bottom: 0.6rem;
-  opacity: 0.85;
+  opacity: 0.9;
 }
 
 .site-title {
   font-size: clamp(1.8rem, 6vw, 2.8rem);
   font-weight: 900;
   line-height: 1.15;
-  letter-spacing: 0.05em;
-  color: #fff;
-  text-shadow: 0 0 30px rgba(240, 192, 48, 0.4);
+  letter-spacing: 0.08em;
+  color: #ffd700;
+  text-shadow:
+    2px 2px 0 rgba(0, 0, 0, 0.5),
+    0 0 20px rgba(255, 215, 0, 0.4);
 }
 
 /* ════════════════════════════════════════════════════════════
@@ -122,8 +138,10 @@ body {
   gap: 1.25rem;
   margin-bottom: 2.5rem;
   padding: 1.5rem;
-  border: 2px solid var(--border-md);
+  border: 3px solid var(--border-md);
+  border-top: 4px solid var(--red);
   background: var(--bg-card);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
 }
 
 .field-group {
@@ -135,12 +153,16 @@ body {
 .field-label {
   font-size: 0.78rem;
   letter-spacing: 0.15em;
-  color: var(--gold);
-  font-weight: 700;
+  color: var(--red);
+  font-weight: 800;
 }
 
 .field-label--magenta {
-  color: #cc80ff;
+  color: #aa3388;
+}
+
+.field-label--pin {
+  color: var(--blue);
 }
 
 /* ── Inputs ─────────────────────────────────────────────────── */
@@ -163,14 +185,19 @@ select {
 }
 
 #pin-input {
-  border-color: #4a2070;
+  border-color: #cc88cc;
+}
+
+#view-pin-input {
+  border-color: #6688cc;
 }
 
 input:focus,
 textarea:focus,
 select:focus {
   outline: none;
-  border-color: var(--gold);
+  border-color: var(--red);
+  box-shadow: 0 0 0 2px rgba(204, 26, 0, 0.15);
 }
 
 select option {
@@ -179,7 +206,13 @@ select option {
 }
 
 #pin-input:focus {
-  border-color: #cc80ff;
+  border-color: #aa3388;
+  box-shadow: 0 0 0 2px rgba(170, 51, 136, 0.15);
+}
+
+#view-pin-input:focus {
+  border-color: var(--blue);
+  box-shadow: 0 0 0 2px rgba(26, 79, 170, 0.15);
 }
 
 input::placeholder,
@@ -190,9 +223,9 @@ textarea::placeholder {
 /* ── Messages ────────────────────────────────────────────────── */
 .error-msg {
   font-size: 0.8rem;
-  color: #ff6060;
+  color: #cc1a00;
   min-height: 1.25em;
-  font-weight: 600;
+  font-weight: 700;
 }
 
 .success-msg {
@@ -211,17 +244,17 @@ textarea::placeholder {
   padding: 0.75rem 1.75rem;
   font-family: inherit;
   font-size: 0.9rem;
-  font-weight: 700;
-  letter-spacing: 0.08em;
+  font-weight: 800;
+  letter-spacing: 0.1em;
   cursor: pointer;
-  border: 2px solid;
+  border: 3px solid;
   background: transparent;
   border-radius: 4px;
   transition:
     background 120ms ease,
     color 120ms ease,
     transform 60ms ease,
-    opacity 120ms ease;
+    box-shadow 120ms ease;
   -webkit-tap-highlight-color: transparent;
 }
 
@@ -231,35 +264,38 @@ textarea::placeholder {
 
 /* Primary — 送信ボタン */
 .btn-primary {
-  border-color: var(--gold);
-  color: var(--gold);
-  background: rgba(240, 192, 48, 0.06);
+  border-color: var(--red);
+  color: var(--red);
+  background: rgba(204, 26, 0, 0.05);
 }
 .btn-primary:hover:not(:disabled) {
-  background: var(--gold);
-  color: #0a0a00;
+  background: var(--red);
+  color: #fff;
+  box-shadow: 0 3px 0 var(--red-dark);
 }
 
 /* Accent — 回答表示ボタン */
 .btn-accent {
-  border-color: var(--blue-light);
-  color: var(--blue-light);
-  background: rgba(74, 140, 255, 0.06);
+  border-color: var(--blue);
+  color: var(--blue);
+  background: rgba(26, 79, 170, 0.05);
 }
 .btn-accent:hover:not(:disabled) {
-  background: var(--blue-light);
+  background: var(--blue);
   color: #fff;
+  box-shadow: 0 3px 0 #0f3580;
 }
 
 /* Danger — 全削除ボタン */
 .btn-danger {
   border-color: var(--red);
   color: var(--red);
-  background: rgba(212, 32, 32, 0.06);
+  background: rgba(204, 26, 0, 0.05);
 }
 .btn-danger:hover:not(:disabled) {
   background: var(--red);
   color: #fff;
+  box-shadow: 0 3px 0 var(--red-dark);
 }
 
 /* Disabled */
@@ -268,7 +304,7 @@ textarea::placeholder {
   color: var(--text-dark) !important;
   background: transparent !important;
   cursor: not-allowed;
-  opacity: 0.45;
+  opacity: 0.5;
 }
 
 /* ════════════════════════════════════════════════════════════
@@ -276,8 +312,8 @@ textarea::placeholder {
    ════════════════════════════════════════════════════════════ */
 
 .host-auth {
-  border-color: #3a1a5a;
-  border-top: 3px solid #cc80ff;
+  border-color: #ddaadd;
+  border-top: 4px solid #aa3388;
   background: var(--bg-host);
   margin-bottom: 1.25rem;
 }
@@ -288,6 +324,41 @@ textarea::placeholder {
   gap: 1rem;
   flex-wrap: wrap;
   margin-bottom: 2rem;
+}
+
+/* ════════════════════════════════════════════════════════════
+   VIEW SECTION — PIN付き回答確認エリア
+   ════════════════════════════════════════════════════════════ */
+
+.view-section {
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+  margin-top: 3rem;
+  padding: 1.5rem;
+  border: 3px solid #99aadd;
+  border-top: 4px solid var(--blue);
+  background: #f0f4ff;
+  box-shadow: 0 2px 8px rgba(26, 79, 170, 0.08);
+}
+
+.view-section-header {
+  border-bottom: 2px solid #99aadd;
+  padding-bottom: 0.6rem;
+}
+
+.view-section-title {
+  font-size: 1.1rem;
+  font-weight: 900;
+  letter-spacing: 0.1em;
+  color: var(--blue);
+}
+
+.view-controls {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  flex-wrap: wrap;
 }
 
 /* ════════════════════════════════════════════════════════════
@@ -303,7 +374,7 @@ textarea::placeholder {
   align-items: center;
   gap: 0.75rem;
   padding: 0.6rem 0;
-  border-bottom: 2px solid var(--gold);
+  border-bottom: 3px solid var(--red);
   margin-bottom: 0.75rem;
 }
 
@@ -311,7 +382,7 @@ textarea::placeholder {
   font-size: 1.1rem;
   font-weight: 900;
   letter-spacing: 0.1em;
-  color: var(--gold);
+  color: var(--red);
 }
 
 /* ════════════════════════════════════════════════════════════
@@ -319,8 +390,8 @@ textarea::placeholder {
    ════════════════════════════════════════════════════════════ */
 
 .host-section {
-  border: 2px solid #3a1a5a;
-  border-top: 3px solid #cc80ff;
+  border: 3px solid #ddaadd;
+  border-top: 4px solid #aa3388;
   padding: 1.5rem;
   background: var(--bg-host);
   margin-bottom: 3rem;
@@ -341,9 +412,9 @@ textarea::placeholder {
   font-size: 0.65rem;
   letter-spacing: 0.25em;
   text-transform: uppercase;
-  color: #cc80ff;
+  color: #aa3388;
   font-weight: 700;
-  border: 1px solid #cc80ff;
+  border: 2px solid #aa3388;
   padding: 0.2rem 0.6rem;
   border-radius: 2px;
 }
@@ -373,7 +444,7 @@ textarea::placeholder {
   display: flex;
   align-items: center;
   gap: 0.75rem;
-  border-bottom: 2px solid var(--border-md);
+  border-bottom: 3px solid var(--border-md);
   padding-bottom: 0.75rem;
 }
 
@@ -386,10 +457,10 @@ textarea::placeholder {
 
 .count-badge {
   font-size: 0.7rem;
-  font-weight: 700;
-  color: var(--gold);
-  background: rgba(240, 192, 48, 0.1);
-  border: 1px solid var(--border-gold);
+  font-weight: 800;
+  color: var(--red);
+  background: rgba(204, 26, 0, 0.08);
+  border: 2px solid rgba(204, 26, 0, 0.3);
   padding: 0.1rem 0.5rem;
   border-radius: 2px;
 }
@@ -420,16 +491,19 @@ textarea::placeholder {
   background: var(--bg-card);
   overflow: hidden;
   border-radius: 3px;
-  transition: border-color 180ms ease;
+  transition: border-color 180ms ease, box-shadow 180ms ease;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.07);
 }
 
 .response-card:hover {
-  border-color: rgba(240, 192, 48, 0.3);
+  border-color: var(--gold-bright);
+  box-shadow: 0 2px 8px rgba(196, 125, 0, 0.15);
 }
 
 /* 回答表示中のカード */
 .response-card.is-revealed {
-  border-color: rgba(240, 192, 48, 0.5);
+  border-color: var(--gold);
+  box-shadow: 0 2px 8px rgba(196, 125, 0, 0.2);
 }
 
 /* ── カードヘッダー: 番号 + 名前 ─────────────────────────── */
@@ -445,8 +519,8 @@ textarea::placeholder {
   font-size: 0.75rem;
   font-weight: 900;
   letter-spacing: 0.05em;
-  color: #0a0a00;
-  background: var(--gold);
+  color: #fff;
+  background: var(--red);
   font-variant-numeric: tabular-nums;
   display: flex;
   align-items: center;
@@ -462,8 +536,8 @@ textarea::placeholder {
   font-weight: 700;
   color: var(--text);
   line-height: 1.3;
-  background: #1a1d3a;
-  border-left: 2px solid var(--border-md);
+  background: #fff8f0;
+  border-left: 3px solid var(--border-md);
   display: flex;
   align-items: center;
 }
@@ -477,7 +551,7 @@ textarea::placeholder {
 .card-answer.hidden {
   min-height: 3.5rem;
   position: relative;
-  background: #0e1025;
+  background: #f0f4e0;
   border-top: 1px solid var(--border);
   display: flex;
   align-items: center;
@@ -487,7 +561,7 @@ textarea::placeholder {
 .card-answer.hidden::before {
   content: '？　？　？';
   font-size: 1.4rem;
-  color: rgba(240, 192, 48, 0.2);
+  color: rgba(196, 125, 0, 0.35);
   font-weight: 900;
   letter-spacing: 0.3em;
   pointer-events: none;
@@ -501,8 +575,8 @@ textarea::placeholder {
   color: var(--text);
   white-space: pre-wrap;
   word-break: break-word;
-  background: #161930;
-  border-top: 2px solid rgba(240, 192, 48, 0.3);
+  background: #fffcf0;
+  border-top: 3px solid var(--gold-bright);
   animation: revealIn 300ms ease forwards;
 }
 
@@ -526,18 +600,20 @@ textarea::placeholder {
   bottom: 2rem;
   left: 50%;
   transform: translateX(-50%) translateY(120%);
-  background: var(--gold);
-  color: #0a0800;
+  background: var(--red);
+  color: #fff;
   font-size: 0.85rem;
-  font-weight: 700;
+  font-weight: 800;
   letter-spacing: 0.1em;
   padding: 0.7rem 1.75rem;
   border-radius: 4px;
+  border: 2px solid var(--red-dark);
   z-index: 2000;
   pointer-events: none;
   opacity: 0;
   transition: transform 220ms ease, opacity 220ms ease;
   white-space: nowrap;
+  box-shadow: 0 3px 12px rgba(204, 26, 0, 0.4);
 }
 
 .toast.show {
@@ -552,6 +628,11 @@ textarea::placeholder {
 @media (max-width: 480px) {
   .host-actions {
     flex-direction: column;
+  }
+
+  .view-controls {
+    flex-direction: column;
+    align-items: flex-start;
   }
 
   .btn {
