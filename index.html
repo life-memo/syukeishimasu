@@ -57,30 +57,30 @@
 
       </section>
 
-      <!-- 回答確認（PIN認証） -->
-      <section class="view-section" aria-label="回答確認">
+      <!-- 回答一覧 -->
+      <section class="view-section" aria-label="回答一覧">
         <div class="view-section-header">
-          <h2 class="view-section-title">回答を確認する</h2>
-        </div>
-
-        <div class="field-group">
-          <label class="field-label field-label--pin" for="view-pin-input">PIN番号</label>
-          <input
-            type="password"
-            id="view-pin-input"
-            placeholder="••••"
-            maxlength="20"
-            autocomplete="off"
-          >
-        </div>
-
-        <div class="view-controls">
-          <button class="btn btn-accent" id="view-toggle-btn" disabled>回答をすべて表示</button>
+          <h2 class="view-section-title">回答一覧</h2>
           <span class="count-badge" id="view-count-display" aria-live="polite">— 件</span>
         </div>
 
         <div id="view-grouped-list">
-          <p class="empty-state">PINを入力してください</p>
+          <p class="empty-state">まだ回答がありません</p>
+        </div>
+
+        <!-- 管理（PIN認証） -->
+        <div class="view-admin">
+          <div class="field-group">
+            <label class="field-label field-label--pin" for="view-pin-input">管理PIN</label>
+            <input
+              type="password"
+              id="view-pin-input"
+              placeholder="••••"
+              maxlength="20"
+              autocomplete="off"
+            >
+          </div>
+          <button class="btn btn-danger" id="view-delete-btn" disabled>全削除</button>
         </div>
       </section>
 

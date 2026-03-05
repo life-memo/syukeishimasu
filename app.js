@@ -10,6 +10,9 @@ import {
   initializeFirestore,
   memoryLocalCache,
   collection,
+  deleteDoc,
+  getDocs,
+  doc,
   onSnapshot,
   query,
   orderBy,
@@ -28,7 +31,7 @@ const firebaseConfig = {
 };
 // ════════════════════════════════════════════════════════════════════════════
 
-/** 主催者 PIN */
+/** 管理PIN */
 const HOST_PIN = "1234";
 
 const fbApp = initializeApp(firebaseConfig);
@@ -42,16 +45,15 @@ const submitBtn      = document.getElementById('submit-btn');
 const errorMsg       = document.getElementById('error-msg');
 const toast          = document.getElementById('toast');
 
-// ── 回答確認 DOM refs ─────────────────────────────────────────────────────────
-const viewPinInput    = document.getElementById('view-pin-input');
-const viewToggleBtn   = document.getElementById('view-toggle-btn');
+// ── 回答一覧 DOM refs ─────────────────────────────────────────────────────────
+const viewPinInput     = document.getElementById('view-pin-input');
+const viewDeleteBtn    = document.getElementById('view-delete-btn');
 const viewCountDisplay = document.getElementById('view-count-display');
-const viewGroupedList = document.getElementById('view-grouped-list');
+const viewGroupedList  = document.getElementById('view-grouped-list');
 
-// ── 回答確認 State ────────────────────────────────────────────────────────────
+// ── State ─────────────────────────────────────────────────────────────────────
 let viewAuthenticated = false;
-let viewRevealed      = false;
-/** @type {{ id: string, name: string, questionNumber: number, answer: string }[]} */
+/** @type {{ id: string, name: string }[]} */
 let allResponses      = [];
 
 // ── Submit（REST API で書き込み） ─────────────────────────────────────────────
@@ -119,27 +121,26 @@ function showToast() {
 // ── PIN validation ────────────────────────────────────────────────────────────
 viewPinInput.addEventListener('input', () => {
   viewAuthenticated = (viewPinInput.value === HOST_PIN);
-  viewToggleBtn.disabled = !viewAuthenticated;
-
-  if (!viewAuthenticated && viewRevealed) {
-    viewRevealed = false;
-    updateViewToggleLabel();
-  }
-
-  renderViewList();
+  viewDeleteBtn.disabled = !viewAuthenticated;
 });
 
-// ── Toggle reveal ─────────────────────────────────────────────────────────────
-viewToggleBtn.addEventListener('click', () => {
+// ── Delete all ────────────────────────────────────────────────────────────────
+viewDeleteBtn.addEventListener('click', async () => {
   if (!viewAuthenticated) return;
-  viewRevealed = !viewRevealed;
-  updateViewToggleLabel();
-  renderViewList();
-});
+  if (!confirm('全件削除しますか？この操作は取り消せません。')) return;
 
-function updateViewToggleLabel() {
-  viewToggleBtn.textContent = viewRevealed ? '回答をすべて隠す' : '回答をすべて表示';
-}
+  viewDeleteBtn.disabled = true;
+
+  try {
+    const snap = await getDocs(collection(db, 'responses'));
+    await Promise.all(snap.docs.map(d => deleteDoc(doc(db, 'responses', d.id))));
+  } catch (err) {
+    alert('削除に失敗しました。');
+    console.error('[app] deleteDoc error:', err);
+  } finally {
+    viewDeleteBtn.disabled = !viewAuthenticated;
+  }
+});
 
 // ── Realtime listener ─────────────────────────────────────────────────────────
 const q = query(
@@ -149,10 +150,8 @@ const q = query(
 
 onSnapshot(q, (snapshot) => {
   allResponses = snapshot.docs.map(d => ({
-    id:             d.id,
-    name:           d.data().name           ?? '',
-    questionNumber: d.data().questionNumber ?? 1,
-    answer:         d.data().answer         ?? '',
+    id:   d.id,
+    name: d.data().name ?? '',
   }));
 
   viewCountDisplay.textContent = `${allResponses.length} 件`;
@@ -161,101 +160,38 @@ onSnapshot(q, (snapshot) => {
   console.error('[app] onSnapshot error:', err);
 });
 
-// ── Render（設問グループ別） ──────────────────────────────────────────────────
+// ── Render（名前のみ、設問グループなし） ──────────────────────────────────────
 function renderViewList() {
   while (viewGroupedList.firstChild) {
     viewGroupedList.removeChild(viewGroupedList.firstChild);
   }
 
-  if (!viewAuthenticated) {
-    const msg = document.createElement('p');
-    msg.className   = 'empty-state';
-    msg.textContent = 'PINを入力してください';
-    viewGroupedList.appendChild(msg);
-    return;
-  }
-
   if (allResponses.length === 0) {
     const empty = document.createElement('p');
     empty.className   = 'empty-state';
-    empty.textContent = 'まだ投稿がありません';
+    empty.textContent = 'まだ回答がありません';
     viewGroupedList.appendChild(empty);
     return;
   }
 
-  const groups = new Map();
-  for (const r of allResponses) {
-    const qn = r.questionNumber;
-    if (!groups.has(qn)) groups.set(qn, []);
-    groups.get(qn).push(r);
-  }
+  const list = document.createElement('div');
+  list.className = 'response-list';
 
-  const sortedKeys = [...groups.keys()].sort((a, b) => a - b);
-  const shouldReveal = viewRevealed;
+  allResponses.forEach((r, i) => {
+    const card = document.createElement('article');
+    card.className = 'response-card';
 
-  for (const qNum of sortedKeys) {
-    const responses = groups.get(qNum);
+    const numEl = document.createElement('span');
+    numEl.className   = 'card-num';
+    numEl.textContent = String(i + 1);
 
-    const groupEl = document.createElement('div');
-    groupEl.className = 'question-group';
+    const nameEl = document.createElement('div');
+    nameEl.className   = 'card-name';
+    nameEl.textContent = r.name;
 
-    const header = document.createElement('div');
-    header.className = 'group-header';
+    card.append(numEl, nameEl);
+    list.appendChild(card);
+  });
 
-    const titleEl = document.createElement('span');
-    titleEl.className   = 'group-title';
-    titleEl.textContent = `Q${qNum}`;
-
-    const badge = document.createElement('span');
-    badge.className   = 'count-badge';
-    badge.textContent = `${responses.length} 件`;
-
-    header.append(titleEl, badge);
-    groupEl.appendChild(header);
-
-    const cardList = document.createElement('div');
-    cardList.className = 'response-list';
-
-    responses.forEach((r, i) => {
-      const card = document.createElement('article');
-      card.className = 'response-card';
-      if (shouldReveal) card.classList.add('is-revealed');
-
-      const cardHeader = document.createElement('div');
-      cardHeader.className = 'card-header';
-
-      const numEl = document.createElement('span');
-      numEl.className   = 'card-num';
-      numEl.textContent = String(i + 1);
-
-      const nameEl = document.createElement('div');
-      nameEl.className   = 'card-name';
-      nameEl.textContent = r.name;
-
-      cardHeader.append(numEl, nameEl);
-
-      const answerWrap = document.createElement('div');
-      answerWrap.className = 'card-answer-wrap';
-
-      const answerEl = document.createElement('div');
-      if (shouldReveal) {
-        answerEl.className   = 'card-answer revealed';
-        answerEl.textContent = r.answer;
-      } else {
-        answerEl.className = 'card-answer hidden';
-        answerEl.setAttribute('aria-label', '回答は非表示');
-        answerEl.setAttribute('aria-hidden', 'true');
-      }
-
-      answerWrap.appendChild(answerEl);
-      card.append(cardHeader, answerWrap);
-      cardList.appendChild(card);
-    });
-
-    groupEl.appendChild(cardList);
-    viewGroupedList.appendChild(groupEl);
-  }
+  viewGroupedList.appendChild(list);
 }
-
-// ── Init ──────────────────────────────────────────────────────────────────────
-updateViewToggleLabel();
