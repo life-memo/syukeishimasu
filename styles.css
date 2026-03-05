@@ -423,12 +423,6 @@ textarea::placeholder {
   text-transform: uppercase;
 }
 
-.response-list {
-  display: flex;
-  flex-direction: column;
-  gap: 2px;
-}
-
 .empty-state {
   color: var(--text-dark);
   font-size: 0.8rem;
@@ -439,104 +433,127 @@ textarea::placeholder {
 }
 
 /* ════════════════════════════════════════════════════════════
-   RESPONSE CARD — editorial, "作品っぽく"
+   RESPONSE LIST spacing
+   ════════════════════════════════════════════════════════════ */
+
+.response-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.6rem;
+}
+
+/* ════════════════════════════════════════════════════════════
+   RESPONSE CARD — quiz-show panel
    ════════════════════════════════════════════════════════════ */
 
 .response-card {
-  border: 1px solid var(--border);
-  border-left: 3px solid var(--lime);
-  padding: 1.25rem 1.25rem 1.25rem 1.5rem;
+  border: 1px solid var(--border-md);
   background: var(--bg-card);
-  position: relative;
-  transition: border-left-color 200ms ease;
-  role: listitem;
+  overflow: hidden;
+  transition: border-color 200ms ease, box-shadow 200ms ease;
 }
 
 .response-card:hover {
-  border-left-color: var(--magenta);
+  border-color: rgba(170, 255, 0, 0.25);
 }
 
-/* Card number — #001, #002 … */
+/* Glowing border when revealed */
+.response-card.is-revealed {
+  border-color: rgba(170, 255, 0, 0.35);
+  box-shadow: 0 0 0 1px rgba(170, 255, 0, 0.08) inset;
+}
+
+/* ── Card header: number + name on one bar ─────────────────── */
+.card-header {
+  display: flex;
+  align-items: center;
+  gap: 0;
+  border-bottom: 1px solid var(--border);
+}
+
+/* Number badge — left column */
 .card-num {
-  display: block;
-  font-size: 0.55rem;
-  letter-spacing: 0.35em;
-  color: var(--lime);
-  font-weight: 700;
-  margin-bottom: 0.5rem;
+  flex-shrink: 0;
+  padding: 0.65rem 0.85rem;
+  font-size: 0.6rem;
+  font-weight: 900;
+  letter-spacing: 0.2em;
+  color: #060606;
+  background: var(--lime);
   font-variant-numeric: tabular-nums;
-  text-transform: uppercase;
-  transition: color 200ms ease;
+  line-height: 1;
+  align-self: stretch;
+  display: flex;
+  align-items: center;
 }
 
-.response-card:hover .card-num {
-  color: var(--magenta);
-}
-
-/* Name — prominent */
+/* Name — right of number, bold nameplate style */
 .card-name {
-  font-size: 1.1rem;
+  flex: 1;
+  padding: 0.7rem 1rem;
+  font-size: 1.05rem;
   font-weight: 700;
   color: var(--text);
-  margin-bottom: 0.8rem;
   letter-spacing: -0.01em;
+  line-height: 1.2;
+  border-left: 1px solid var(--border-md);
 }
 
-/* ─── Answer: base ──────────────────────────────────────────── */
-.card-answer {
-  transition: opacity 250ms ease;
+/* ── Answer wrap ────────────────────────────────────────────── */
+.card-answer-wrap {
+  padding: 0;
 }
 
-/* ─── Answer: HIDDEN — diagonal hatch blind ─────────────────── */
+/* ─── Answer: HIDDEN — dramatic locked bar ──────────────────── */
 .card-answer.hidden {
-  min-height: 4rem;
+  min-height: 3.75rem;
   position: relative;
   overflow: hidden;
-  /* Neon lime diagonal stripe pattern */
-  background: repeating-linear-gradient(
-    -55deg,
-    rgba(170, 255, 0, 0.07)  0px,
-    rgba(170, 255, 0, 0.07)  1px,
-    transparent               1px,
-    transparent               10px
-  );
-  border: 1px solid rgba(170, 255, 0, 0.1);
+  background:
+    repeating-linear-gradient(
+      -50deg,
+      rgba(170, 255, 0, 0.05) 0px,
+      rgba(170, 255, 0, 0.05) 1px,
+      transparent 1px,
+      transparent 9px
+    );
 }
 
-/* Label overlaid on the blind */
 .card-answer.hidden::before {
-  content: 'HIDDEN  ·  回答は非表示';
+  content: '— 回答は非表示 —';
   position: absolute;
   inset: 0;
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 0.48rem;
-  letter-spacing: 0.5em;
+  font-size: 0.6rem;
+  letter-spacing: 0.45em;
   text-transform: uppercase;
-  color: rgba(170, 255, 0, 0.3);
+  color: rgba(170, 255, 0, 0.28);
   font-weight: 700;
   pointer-events: none;
-  /* CSS "display: flex" doesn't work on ::before; use text-align + padding */
-  display: block;
+  /* fallback for non-flex pseudo-elements */
   text-align: center;
-  padding-top: 1.3rem;
+  padding-top: 1.25rem;
 }
 
-/* ─── Answer: REVEALED — animated fade-in ───────────────────── */
+/* ─── Answer: REVEALED — big, readable, quiz-result feel ────── */
 .card-answer.revealed {
-  color: #ccc;
-  font-size: 0.95rem;
+  padding: 1rem 1.1rem 1.1rem;
+  font-size: 1.05rem;
   line-height: 1.75;
+  color: var(--text);
   white-space: pre-wrap;
   word-break: break-word;
-  animation: revealIn 250ms ease forwards;
+  background: rgba(170, 255, 0, 0.03);
+  border-top: 1px solid rgba(170, 255, 0, 0.1);
+  animation: revealIn 280ms ease forwards;
 }
 
 @keyframes revealIn {
   from {
     opacity: 0;
-    transform: translateY(4px);
+    transform: translateY(6px);
   }
   to {
     opacity: 1;

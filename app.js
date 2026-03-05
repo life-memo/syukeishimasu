@@ -184,32 +184,39 @@ function renderList() {
   allResponses.forEach((r, i) => {
     const card = document.createElement('article');
     card.className = 'response-card';
+    if (shouldReveal) card.classList.add('is-revealed');
     card.setAttribute('role', 'listitem');
 
-    // ── 番号 (#001, #002 …) ────────────────────────────
+    // ── ヘッダー行（番号 + 名前） ──────────────────────
+    const header = document.createElement('div');
+    header.className = 'card-header';
+
     const numEl = document.createElement('span');
     numEl.className   = 'card-num';
     numEl.textContent = `#${String(total - i).padStart(3, '0')}`;
 
-    // ── 入力者名 ───────────────────────────────────────
     const nameEl = document.createElement('div');
     nameEl.className   = 'card-name';
     nameEl.textContent = r.name;
 
-    // ── 回答（表示 or 非表示） ─────────────────────────
-    const answerEl = document.createElement('div');
+    header.append(numEl, nameEl);
 
+    // ── 回答エリア ─────────────────────────────────────
+    const answerWrap = document.createElement('div');
+    answerWrap.className = 'card-answer-wrap';
+
+    const answerEl = document.createElement('div');
     if (shouldReveal) {
       answerEl.className   = 'card-answer revealed';
       answerEl.textContent = r.answer;   // XSS: textContent のみ
     } else {
       answerEl.className = 'card-answer hidden';
-      // テキストなし：CSS のハッチパターンで視覚的に隠す
       answerEl.setAttribute('aria-label', '回答は非表示');
       answerEl.setAttribute('aria-hidden', 'true');
     }
 
-    card.append(numEl, nameEl, answerEl);
+    answerWrap.appendChild(answerEl);
+    card.append(header, answerWrap);
     responseList.appendChild(card);
   });
 }
