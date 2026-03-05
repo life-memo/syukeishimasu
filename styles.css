@@ -101,6 +101,28 @@ body {
   pointer-events: none;
 }
 
+.back-btn {
+  position: absolute;
+  top: 1rem;
+  left: 1rem;
+  background: rgba(255,255,255,0.18);
+  color: #fff;
+  border: 1.5px solid rgba(255,255,255,0.35);
+  border-radius: 99px;
+  padding: 0.35rem 0.9rem;
+  font-family: inherit;
+  font-size: 0.75rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  cursor: pointer;
+  transition: background 120ms;
+  z-index: 1;
+}
+
+.back-btn:hover {
+  background: rgba(255,255,255,0.3);
+}
+
 .eyebrow {
   font-size: 0.58rem;
   letter-spacing: 0.45em;
