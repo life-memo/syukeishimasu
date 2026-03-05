@@ -13,11 +13,9 @@ import {
   initializeFirestore,
   memoryLocalCache,
   collection,
-  addDoc,
   deleteDoc,
   getDocs,
   doc,
-  serverTimestamp,
   onSnapshot,
   query,
   orderBy,
@@ -80,7 +78,33 @@ pinInput.addEventListener('input', () => {
   renderList();
 });
 
-// ── Submit ───────────────────────────────────────────────────────────────────
+// ── Submit（REST API で書き込み） ─────────────────────────────────────────────
+// Firebase SDK の addDoc は gRPC チャネルが詰まると永遠に pending になる。
+// 普通の fetch による REST API に置き換えることで毎回確実に動作する。
+async function postResponse(name, answer) {
+  const { projectId, apiKey } = fbApp.options;
+  const url =
+    `https://firestore.googleapis.com/v1/projects/${projectId}` +
+    `/databases/(default)/documents/responses?key=${apiKey}`;
+
+  const resp = await fetch(url, {
+    method:  'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({
+      fields: {
+        name:      { stringValue: name },
+        answer:    { stringValue: answer },
+        createdAt: { timestampValue: new Date().toISOString() },
+      },
+    }),
+  });
+
+  if (!resp.ok) {
+    const body = await resp.json().catch(() => ({}));
+    throw new Error(body.error?.message ?? `HTTP ${resp.status}`);
+  }
+}
+
 submitBtn.addEventListener('click', async () => {
   const name   = nameInput.value.trim();
   const answer = answerInput.value.trim();
@@ -95,35 +119,13 @@ submitBtn.addEventListener('click', async () => {
   submitBtn.disabled = true;
   submitBtn.textContent = '送信中…';
 
-  // タイムアウト: 8秒以内にサーバー応答がなければ強制的にエラー扱い
-  // （Firebase addDoc はサーバーACKを待つため、接続不安定時にハングする）
-  let timeoutId;
-  const timeoutPromise = new Promise((_, reject) => {
-    timeoutId = setTimeout(() => reject(new Error('timeout')), 8000);
-  });
-
   try {
-    await Promise.race([
-      addDoc(collection(db, 'responses'), {
-        name,
-        answer,
-        createdAt: serverTimestamp(),
-      }),
-      timeoutPromise,
-    ]);
-
-    clearTimeout(timeoutId);
+    await postResponse(name, answer);
     answerInput.value = '';
     showToast();
-
   } catch (err) {
-    clearTimeout(timeoutId);
-    if (err.message === 'timeout') {
-      errorMsg.textContent = '送信がタイムアウトしました。ネットワークを確認してもう一度お試しください。';
-    } else {
-      errorMsg.textContent = `送信に失敗しました（${err.code ?? err.message}）`;
-    }
-    console.error('[app] addDoc error:', err);
+    errorMsg.textContent = `送信に失敗しました（${err.message}）`;
+    console.error('[app] postResponse error:', err);
   } finally {
     submitBtn.disabled = false;
     submitBtn.textContent = '送信';
