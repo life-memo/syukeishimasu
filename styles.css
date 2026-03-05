@@ -146,7 +146,8 @@ body {
 /* ── Inputs ─────────────────────────────────────────────────── */
 input[type="text"],
 input[type="password"],
-textarea {
+textarea,
+select {
   background: var(--bg-input);
   border: 2px solid var(--border-md);
   color: var(--text);
@@ -166,9 +167,15 @@ textarea {
 }
 
 input:focus,
-textarea:focus {
+textarea:focus,
+select:focus {
   outline: none;
   border-color: var(--gold);
+}
+
+select option {
+  background: var(--bg-card);
+  color: var(--text);
 }
 
 #pin-input:focus {
@@ -265,7 +272,50 @@ textarea::placeholder {
 }
 
 /* ════════════════════════════════════════════════════════════
-   HOST SECTION
+   HOST AUTH / CONTROLS
+   ════════════════════════════════════════════════════════════ */
+
+.host-auth {
+  border-color: #3a1a5a;
+  border-top: 3px solid #cc80ff;
+  background: var(--bg-host);
+  margin-bottom: 1.25rem;
+}
+
+.host-controls {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  flex-wrap: wrap;
+  margin-bottom: 2rem;
+}
+
+/* ════════════════════════════════════════════════════════════
+   QUESTION GROUPS
+   ════════════════════════════════════════════════════════════ */
+
+.question-group {
+  margin-bottom: 2rem;
+}
+
+.group-header {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.6rem 0;
+  border-bottom: 2px solid var(--gold);
+  margin-bottom: 0.75rem;
+}
+
+.group-title {
+  font-size: 1.1rem;
+  font-weight: 900;
+  letter-spacing: 0.1em;
+  color: var(--gold);
+}
+
+/* ════════════════════════════════════════════════════════════
+   HOST SECTION (legacy — 旧スタイル互換)
    ════════════════════════════════════════════════════════════ */
 
 .host-section {

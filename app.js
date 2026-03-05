@@ -1,24 +1,14 @@
 /**
- * app.js — 回答入力・共有システム
- *
+ * app.js — 回答者用
  * Firebase Firestore (v10 CDN / ES module) でリアルタイム共有。
- * XSS 対策: DOM 操作はすべて textContent のみ使用 (innerHTML 禁止)。
+ * XSS 対策: DOM 操作はすべて textContent のみ使用。
  */
 
-// ── Firebase SDK (CDN / ES Module) ──────────────────────────────────────────
 import { initializeApp } from
   'https://www.gstatic.com/firebasejs/10.14.0/firebase-app.js';
-
 import {
   initializeFirestore,
   memoryLocalCache,
-  collection,
-  deleteDoc,
-  getDocs,
-  doc,
-  onSnapshot,
-  query,
-  orderBy,
 } from 'https://www.gstatic.com/firebasejs/10.14.0/firebase-firestore.js';
 
 // ════════════════════════════════════════════════════════════════════════════
@@ -34,54 +24,19 @@ const firebaseConfig = {
 };
 // ════════════════════════════════════════════════════════════════════════════
 
-/** 主催者 PIN（必要に応じて変更）*/
-const HOST_PIN = "1234";
-
-// ── Firebase 初期化 ──────────────────────────────────────────────────────────
 const fbApp = initializeApp(firebaseConfig);
-// memoryLocalCache: IndexedDB によるオフライン永続化を無効化。
-// iOS Safari で IndexedDB がハングし addDoc が永遠に pending になる問題を回避。
-const db = initializeFirestore(fbApp, { localCache: memoryLocalCache() });
-
-// ── State ────────────────────────────────────────────────────────────────────
-let isAuthenticated = false;   // 正しい PIN が入力されているか
-let isRevealed      = false;   // 回答を表示中か
-/** @type {{ id: string, name: string, answer: string }[]} */
-let allResponses    = [];
+initializeFirestore(fbApp, { localCache: memoryLocalCache() });
 
 // ── DOM refs ─────────────────────────────────────────────────────────────────
-const nameInput     = document.getElementById('name-input');
-const answerInput   = document.getElementById('answer-input');
-const submitBtn     = document.getElementById('submit-btn');
-const errorMsg      = document.getElementById('error-msg');
-const successMsg    = document.getElementById('success-msg');
-const pinInput      = document.getElementById('pin-input');
-const toggleBtn     = document.getElementById('toggle-btn');
-const deleteAllBtn  = document.getElementById('delete-all-btn');
-const responseList  = document.getElementById('response-list');
-const countDisplay  = document.getElementById('count-display');
-const toast         = document.getElementById('toast');
-
-// ── PIN validation ───────────────────────────────────────────────────────────
-pinInput.addEventListener('input', () => {
-  isAuthenticated = (pinInput.value === HOST_PIN);
-
-  toggleBtn.disabled    = !isAuthenticated;
-  deleteAllBtn.disabled = !isAuthenticated;
-
-  // PIN を外したら強制的に非表示に戻す
-  if (!isAuthenticated && isRevealed) {
-    isRevealed = false;
-    updateToggleLabel();
-  }
-
-  renderList();
-});
+const nameInput      = document.getElementById('name-input');
+const questionSelect = document.getElementById('question-select');
+const answerInput    = document.getElementById('answer-input');
+const submitBtn      = document.getElementById('submit-btn');
+const errorMsg       = document.getElementById('error-msg');
+const toast          = document.getElementById('toast');
 
 // ── Submit（REST API で書き込み） ─────────────────────────────────────────────
-// Firebase SDK の addDoc は gRPC チャネルが詰まると永遠に pending になる。
-// 普通の fetch による REST API に置き換えることで毎回確実に動作する。
-async function postResponse(name, answer) {
+async function postResponse(name, questionNumber, answer) {
   const { projectId, apiKey } = fbApp.options;
   const url =
     `https://firestore.googleapis.com/v1/projects/${projectId}` +
@@ -92,9 +47,10 @@ async function postResponse(name, answer) {
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({
       fields: {
-        name:      { stringValue: name },
-        answer:    { stringValue: answer },
-        createdAt: { timestampValue: new Date().toISOString() },
+        name:           { stringValue: name },
+        questionNumber: { integerValue: questionNumber },
+        answer:         { stringValue: answer },
+        createdAt:      { timestampValue: new Date().toISOString() },
       },
     }),
   });
@@ -106,154 +62,37 @@ async function postResponse(name, answer) {
 }
 
 submitBtn.addEventListener('click', async () => {
-  const name   = nameInput.value.trim();
-  const answer = answerInput.value.trim();
+  const name           = nameInput.value.trim();
+  const questionNumber = parseInt(questionSelect.value, 10);
+  const answer         = answerInput.value.trim();
 
-  clearMessages();
+  errorMsg.textContent = '';
 
   if (!name || !answer) {
-    errorMsg.textContent = '入力者名と回答を入力してください';
+    errorMsg.textContent = '名前と回答を入力してください';
     return;
   }
 
-  submitBtn.disabled = true;
+  submitBtn.disabled    = true;
   submitBtn.textContent = '送信中…';
 
   try {
-    await postResponse(name, answer);
+    await postResponse(name, questionNumber, answer);
     answerInput.value = '';
     showToast();
   } catch (err) {
     errorMsg.textContent = `送信に失敗しました（${err.message}）`;
     console.error('[app] postResponse error:', err);
   } finally {
-    submitBtn.disabled = false;
+    submitBtn.disabled    = false;
     submitBtn.textContent = '送信';
   }
 });
 
-// ── Toggle reveal ────────────────────────────────────────────────────────────
-toggleBtn.addEventListener('click', () => {
-  if (!isAuthenticated) return;
-
-  isRevealed = !isRevealed;
-  updateToggleLabel();
-  renderList();
-});
-
-function updateToggleLabel() {
-  toggleBtn.textContent = isRevealed ? '回答をすべて隠す' : '回答をすべて表示';
-}
-
-// ── Delete all ───────────────────────────────────────────────────────────────
-deleteAllBtn.addEventListener('click', async () => {
-  if (!isAuthenticated) return;
-  if (!confirm('全件削除しますか？この操作は取り消せません。')) return;
-
-  deleteAllBtn.disabled = true;
-
-  try {
-    const snap = await getDocs(collection(db, 'responses'));
-    // 並列削除
-    await Promise.all(snap.docs.map(d => deleteDoc(doc(db, 'responses', d.id))));
-  } catch (err) {
-    alert('削除に失敗しました。');
-    console.error('[app] deleteDoc error:', err);
-  } finally {
-    deleteAllBtn.disabled = !isAuthenticated;
-  }
-});
-
-// ── Realtime listener ────────────────────────────────────────────────────────
-const q = query(
-  collection(db, 'responses'),
-  orderBy('createdAt', 'desc'),
-);
-
-onSnapshot(q, (snapshot) => {
-  allResponses = snapshot.docs.map(d => ({
-    id:     d.id,
-    name:   d.data().name   ?? '',
-    answer: d.data().answer ?? '',
-  }));
-
-  countDisplay.textContent = `${allResponses.length} 件`;
-  renderList();
-
-}, (err) => {
-  console.error('[app] onSnapshot error:', err);
-});
-
-// ── Render ───────────────────────────────────────────────────────────────────
-function renderList() {
-  // DOM を安全にクリア（innerHTML 不使用）
-  while (responseList.firstChild) {
-    responseList.removeChild(responseList.firstChild);
-  }
-
-  if (allResponses.length === 0) {
-    const empty = document.createElement('p');
-    empty.className   = 'empty-state';
-    empty.textContent = 'まだ投稿がありません';
-    responseList.appendChild(empty);
-    return;
-  }
-
-  const shouldReveal = isAuthenticated && isRevealed;
-  const total        = allResponses.length;
-
-  allResponses.forEach((r, i) => {
-    const card = document.createElement('article');
-    card.className = 'response-card';
-    if (shouldReveal) card.classList.add('is-revealed');
-    card.setAttribute('role', 'listitem');
-
-    // ── ヘッダー行（番号 + 名前） ──────────────────────
-    const header = document.createElement('div');
-    header.className = 'card-header';
-
-    const numEl = document.createElement('span');
-    numEl.className   = 'card-num';
-    numEl.textContent = `#${String(total - i).padStart(3, '0')}`;
-
-    const nameEl = document.createElement('div');
-    nameEl.className   = 'card-name';
-    nameEl.textContent = r.name;
-
-    header.append(numEl, nameEl);
-
-    // ── 回答エリア ─────────────────────────────────────
-    const answerWrap = document.createElement('div');
-    answerWrap.className = 'card-answer-wrap';
-
-    const answerEl = document.createElement('div');
-    if (shouldReveal) {
-      answerEl.className   = 'card-answer revealed';
-      answerEl.textContent = r.answer;   // XSS: textContent のみ
-    } else {
-      answerEl.className = 'card-answer hidden';
-      answerEl.setAttribute('aria-label', '回答は非表示');
-      answerEl.setAttribute('aria-hidden', 'true');
-    }
-
-    answerWrap.appendChild(answerEl);
-    card.append(header, answerWrap);
-    responseList.appendChild(card);
-  });
-}
-
-// ── Helpers ──────────────────────────────────────────────────────────────────
-function clearMessages() {
-  errorMsg.textContent   = '';
-  successMsg.textContent = '';
-}
-
+// ── Toast ─────────────────────────────────────────────────────────────────────
 let toastTimer = null;
 function showToast() {
   toast.classList.add('show');
   clearTimeout(toastTimer);
   toastTimer = setTimeout(() => toast.classList.remove('show'), 2500);
 }
-
-// ── Init ─────────────────────────────────────────────────────────────────────
-updateToggleLabel();
