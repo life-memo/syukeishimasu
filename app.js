@@ -46,12 +46,14 @@ const toast       = document.getElementById('toast');
 
 // ── 回答一覧 DOM refs ─────────────────────────────────────────────────────────
 const viewPinInput     = document.getElementById('view-pin-input');
+const viewToggleBtn    = document.getElementById('view-toggle-btn');
 const viewDeleteBtn    = document.getElementById('view-delete-btn');
 const viewCountDisplay = document.getElementById('view-count-display');
 const viewGroupedList  = document.getElementById('view-grouped-list');
 
 // ── State ─────────────────────────────────────────────────────────────────────
 let viewAuthenticated = false;
+let viewRevealed      = false;
 /** @type {{ id: string, name: string }[]} */
 let allResponses      = [];
 
@@ -118,8 +120,27 @@ function showToast() {
 // ── PIN validation ────────────────────────────────────────────────────────────
 viewPinInput.addEventListener('input', () => {
   viewAuthenticated = (viewPinInput.value === HOST_PIN);
+  viewToggleBtn.disabled = !viewAuthenticated;
   viewDeleteBtn.disabled = !viewAuthenticated;
+
+  if (!viewAuthenticated && viewRevealed) {
+    viewRevealed = false;
+    updateToggleLabel();
+    renderViewList();
+  }
 });
+
+// ── Toggle reveal ─────────────────────────────────────────────────────────────
+viewToggleBtn.addEventListener('click', () => {
+  if (!viewAuthenticated) return;
+  viewRevealed = !viewRevealed;
+  updateToggleLabel();
+  renderViewList();
+});
+
+function updateToggleLabel() {
+  viewToggleBtn.textContent = viewRevealed ? '回答を隠す' : '回答を表示';
+}
 
 // ── Delete all ────────────────────────────────────────────────────────────────
 viewDeleteBtn.addEventListener('click', async () => {
@@ -188,8 +209,13 @@ function renderViewList() {
     nameEl.textContent = r.name;
 
     const answerEl = document.createElement('div');
-    answerEl.className   = 'card-answer-blur';
-    answerEl.textContent = r.answer || '（回答あり）';
+    if (viewRevealed) {
+      answerEl.className   = 'card-answer-reveal';
+      answerEl.textContent = r.answer || '（空白）';
+    } else {
+      answerEl.className   = 'card-answer-mask';
+      answerEl.textContent = '██████████';
+    }
 
     card.append(numEl, nameEl, answerEl);
     list.appendChild(card);

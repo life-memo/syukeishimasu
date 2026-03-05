@@ -1,62 +1,39 @@
 /* ════════════════════════════════════════════════════════════
    回答入力システム — styles.css
-   Design: 昭和クイズ番組風（明るく元気なカラー）
+   Design: モダン昭和クイズ番組（トレンディ版）
    ════════════════════════════════════════════════════════════ */
 
 /* ── Design tokens ─────────────────────────────────────────── */
 :root {
-  --bg:          #fdf6e3;        /* 温かいクリーム */
-  --bg-card:     #ffffff;
-  --bg-input:    #fffaf0;
-  --bg-host:     #fff5f8;        /* ピンクみがかったエリア */
-  --text:        #1a1000;        /* 濃いこげ茶 */
-  --text-dim:    #666655;
-  --text-dark:   #bbbbaa;
-  --red:         #cc1a00;        /* クイズ番組の赤 */
-  --red-dark:    #991400;
-  --gold:        #c47d00;        /* 金色アクセント */
-  --gold-bright: #f0a800;
-  --blue:        #1a4faa;        /* 解答パネルの青 */
-  --blue-bright: #2a6fd4;
-  --border:      #e8dfc0;
-  --border-md:   #d4c088;
-  --border-gold: #c47d00;
-  --header-bg:   #cc1a00;
+  --bg:        #f5f0e8;
+  --bg-card:   #ffffff;
+  --bg-input:  #fdfaf5;
+  --text:      #1a1208;
+  --text-dim:  #7a6e5e;
+  --text-mute: #c8bfb0;
+  --red:       #e82a1a;
+  --red-dark:  #b51e10;
+  --orange:    #f07010;
+  --gold:      #d4900a;
+  --blue:      #1a5abf;
+  --border:    #e0d8c8;
+  --border-md: #c8bca8;
+  --radius:    12px;
+  --radius-sm: 8px;
 }
 
 /* ── Reset ──────────────────────────────────────────────────── */
-*, *::before, *::after {
-  box-sizing: border-box;
-  margin: 0;
-  padding: 0;
-}
-
-html {
-  scroll-behavior: smooth;
-}
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; }
 
 /* ── Base ───────────────────────────────────────────────────── */
 body {
-  background-color: var(--bg);
-  background-image:
-    repeating-linear-gradient(
-      0deg,
-      transparent,
-      transparent 39px,
-      rgba(196, 125, 0, 0.06) 39px,
-      rgba(196, 125, 0, 0.06) 40px
-    ),
-    repeating-linear-gradient(
-      90deg,
-      transparent,
-      transparent 39px,
-      rgba(196, 125, 0, 0.06) 39px,
-      rgba(196, 125, 0, 0.06) 40px
-    );
+  background: var(--bg);
+  background-image: radial-gradient(circle at 20% 20%, rgba(232,42,26,0.05) 0%, transparent 50%),
+                    radial-gradient(circle at 80% 80%, rgba(240,112,16,0.05) 0%, transparent 50%);
   color: var(--text);
-  font-family:
-    'Hiragino Kaku Gothic ProN', 'Hiragino Sans',
-    'Noto Sans JP', 'Yu Gothic', 'Helvetica Neue', Arial, sans-serif;
+  font-family: 'Hiragino Kaku Gothic ProN', 'Hiragino Sans',
+               'Noto Sans JP', 'Yu Gothic', Arial, sans-serif;
   line-height: 1.7;
   min-height: 100vh;
   overflow-x: hidden;
@@ -70,100 +47,99 @@ body {
    ════════════════════════════════════════════════════════════ */
 
 .container {
-  max-width: 680px;
+  max-width: 640px;
   margin: 0 auto;
-  padding: 2rem 1.25rem 5rem;
+  padding: 1.5rem 1.25rem 5rem;
 }
 
 @media (min-width: 760px) {
-  .container {
-    padding: 3rem 2rem 6rem;
-  }
+  .container { padding: 2.5rem 2rem 6rem; }
 }
 
 /* ════════════════════════════════════════════════════════════
-   HEADER — 昭和番組タイトル風（赤地に金文字）
+   HEADER — グラデーション帯
    ════════════════════════════════════════════════════════════ */
 
 .site-header {
-  margin-bottom: 2.5rem;
+  margin-bottom: 2rem;
   text-align: center;
-  padding: 2rem 1.5rem 1.75rem;
-  background: var(--header-bg);
-  border: 4px double #ffd700;
-  box-shadow:
-    0 4px 0 var(--red-dark),
-    0 6px 16px rgba(204, 26, 0, 0.35);
+  padding: 2.25rem 1.5rem 2rem;
+  background: linear-gradient(135deg, #e82a1a 0%, #f07010 100%);
+  border-radius: var(--radius);
+  box-shadow: 0 8px 32px rgba(232, 42, 26, 0.3), 0 2px 0 rgba(0,0,0,0.1);
   position: relative;
+  overflow: hidden;
 }
 
-.site-header::before,
-.site-header::after {
-  content: '★';
+.site-header::before {
+  content: '';
   position: absolute;
-  color: #ffd700;
-  font-size: 1rem;
-  opacity: 0.9;
+  inset: 0;
+  background: repeating-linear-gradient(
+    -45deg,
+    transparent,
+    transparent 12px,
+    rgba(255,255,255,0.04) 12px,
+    rgba(255,255,255,0.04) 13px
+  );
+  pointer-events: none;
 }
-.site-header::before { top: 0.5rem; left: 0.75rem; }
-.site-header::after  { bottom: 0.5rem; right: 0.75rem; }
 
 .eyebrow {
-  font-size: 0.65rem;
-  letter-spacing: 0.3em;
-  color: #ffd700;
+  font-size: 0.6rem;
+  letter-spacing: 0.4em;
+  color: rgba(255,255,255,0.8);
   font-weight: 700;
-  margin-bottom: 0.6rem;
-  opacity: 0.9;
+  margin-bottom: 0.5rem;
+  text-transform: uppercase;
 }
 
 .site-title {
-  font-size: clamp(1.8rem, 6vw, 2.8rem);
+  font-size: clamp(1.8rem, 6vw, 2.6rem);
   font-weight: 900;
-  line-height: 1.15;
-  letter-spacing: 0.08em;
-  color: #ffd700;
-  text-shadow:
-    2px 2px 0 rgba(0, 0, 0, 0.5),
-    0 0 20px rgba(255, 215, 0, 0.4);
+  letter-spacing: 0.06em;
+  color: #fff;
+  text-shadow: 0 2px 8px rgba(0,0,0,0.25);
+}
+
+/* ════════════════════════════════════════════════════════════
+   CARD BASE (shared)
+   ════════════════════════════════════════════════════════════ */
+
+.form-section,
+.view-section {
+  background: var(--bg-card);
+  border-radius: var(--radius);
+  box-shadow: 0 2px 16px rgba(0,0,0,0.07), 0 1px 0 var(--border);
+  padding: 1.5rem;
+  margin-bottom: 1.5rem;
+}
+
+.form-section {
+  border-top: 4px solid var(--red);
 }
 
 /* ════════════════════════════════════════════════════════════
    FORM SECTION
    ════════════════════════════════════════════════════════════ */
 
-.form-section {
-  display: flex;
-  flex-direction: column;
-  gap: 1.25rem;
-  margin-bottom: 2.5rem;
-  padding: 1.5rem;
-  border: 3px solid var(--border-md);
-  border-top: 4px solid var(--red);
-  background: var(--bg-card);
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
-}
-
 .field-group {
   display: flex;
   flex-direction: column;
   gap: 0.4rem;
+  margin-bottom: 1rem;
 }
 
 .field-label {
-  font-size: 0.78rem;
-  letter-spacing: 0.15em;
+  font-size: 0.72rem;
+  letter-spacing: 0.18em;
   color: var(--red);
   font-weight: 800;
+  text-transform: uppercase;
 }
 
-.field-label--magenta {
-  color: #aa3388;
-}
-
-.field-label--pin {
-  color: var(--blue);
-}
+.field-label--magenta { color: #a030a0; }
+.field-label--pin { color: var(--blue); }
 
 /* ── Inputs ─────────────────────────────────────────────────── */
 input[type="text"],
@@ -171,25 +147,17 @@ input[type="password"],
 textarea,
 select {
   background: var(--bg-input);
-  border: 2px solid var(--border-md);
+  border: 2px solid var(--border);
   color: var(--text);
   padding: 0.75rem 1rem;
   width: 100%;
   font-family: inherit;
   font-size: 1rem;
-  transition: border-color 150ms ease;
+  transition: border-color 150ms ease, box-shadow 150ms ease;
   appearance: none;
   -webkit-appearance: none;
-  border-radius: 4px;
+  border-radius: var(--radius-sm);
   resize: vertical;
-}
-
-#pin-input {
-  border-color: #cc88cc;
-}
-
-#view-pin-input {
-  border-color: #6688cc;
 }
 
 input:focus,
@@ -197,418 +165,302 @@ textarea:focus,
 select:focus {
   outline: none;
   border-color: var(--red);
-  box-shadow: 0 0 0 2px rgba(204, 26, 0, 0.15);
-}
-
-select option {
-  background: var(--bg-card);
-  color: var(--text);
-}
-
-#pin-input:focus {
-  border-color: #aa3388;
-  box-shadow: 0 0 0 2px rgba(170, 51, 136, 0.15);
+  box-shadow: 0 0 0 3px rgba(232, 42, 26, 0.12);
 }
 
 #view-pin-input:focus {
   border-color: var(--blue);
-  box-shadow: 0 0 0 2px rgba(26, 79, 170, 0.15);
+  box-shadow: 0 0 0 3px rgba(26, 90, 191, 0.12);
 }
 
-input::placeholder,
-textarea::placeholder {
-  color: var(--text-dark);
-}
+select option { background: var(--bg-card); color: var(--text); }
+input::placeholder, textarea::placeholder { color: var(--text-mute); }
 
 /* ── Messages ────────────────────────────────────────────────── */
 .error-msg {
   font-size: 0.8rem;
-  color: #cc1a00;
+  color: var(--red);
   min-height: 1.25em;
   font-weight: 700;
-}
-
-.success-msg {
-  font-size: 0.8rem;
-  color: var(--gold);
-  min-height: 1.25em;
-  font-weight: 600;
+  margin-bottom: 0.5rem;
 }
 
 /* ════════════════════════════════════════════════════════════
-   BUTTONS — 昭和番組の明快なボタン
+   BUTTONS
    ════════════════════════════════════════════════════════════ */
 
 .btn {
-  display: inline-block;
-  padding: 0.75rem 1.75rem;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0.75rem 1.5rem;
   font-family: inherit;
   font-size: 0.9rem;
   font-weight: 800;
-  letter-spacing: 0.1em;
+  letter-spacing: 0.06em;
   cursor: pointer;
-  border: 3px solid;
-  background: transparent;
-  border-radius: 4px;
-  transition:
-    background 120ms ease,
-    color 120ms ease,
-    transform 60ms ease,
-    box-shadow 120ms ease;
+  border: none;
+  border-radius: var(--radius-sm);
+  transition: transform 80ms ease, box-shadow 120ms ease, background 120ms ease;
   -webkit-tap-highlight-color: transparent;
+  white-space: nowrap;
 }
 
-.btn:active:not(:disabled) {
-  transform: scale(0.97);
-}
+.btn:active:not(:disabled) { transform: scale(0.96); }
 
-/* Primary — 送信ボタン */
 .btn-primary {
-  border-color: var(--red);
-  color: var(--red);
-  background: rgba(204, 26, 0, 0.05);
+  background: linear-gradient(135deg, var(--red) 0%, var(--orange) 100%);
+  color: #fff;
+  box-shadow: 0 4px 0 var(--red-dark), 0 6px 16px rgba(232,42,26,0.25);
+  width: 100%;
+  font-size: 1rem;
+  padding: 0.9rem;
+  letter-spacing: 0.15em;
 }
 .btn-primary:hover:not(:disabled) {
-  background: var(--red);
-  color: #fff;
-  box-shadow: 0 3px 0 var(--red-dark);
+  box-shadow: 0 6px 0 var(--red-dark), 0 8px 24px rgba(232,42,26,0.3);
+  transform: translateY(-1px);
+}
+.btn-primary:active:not(:disabled) {
+  box-shadow: 0 2px 0 var(--red-dark);
+  transform: translateY(2px);
 }
 
-/* Accent — 回答表示ボタン */
 .btn-accent {
-  border-color: var(--blue);
-  color: var(--blue);
-  background: rgba(26, 79, 170, 0.05);
-}
-.btn-accent:hover:not(:disabled) {
   background: var(--blue);
   color: #fff;
-  box-shadow: 0 3px 0 #0f3580;
+  box-shadow: 0 3px 0 #0f3d8c, 0 4px 12px rgba(26,90,191,0.2);
+}
+.btn-accent:hover:not(:disabled) {
+  background: #2068d4;
+  box-shadow: 0 4px 0 #0f3d8c, 0 6px 16px rgba(26,90,191,0.25);
 }
 
-/* Danger — 全削除ボタン */
 .btn-danger {
-  border-color: var(--red);
+  background: #fff;
   color: var(--red);
-  background: rgba(204, 26, 0, 0.05);
+  border: 2px solid var(--red);
+  box-shadow: none;
 }
 .btn-danger:hover:not(:disabled) {
   background: var(--red);
   color: #fff;
-  box-shadow: 0 3px 0 var(--red-dark);
 }
 
-/* Disabled */
 .btn:disabled {
-  border-color: var(--text-dark) !important;
-  color: var(--text-dark) !important;
-  background: transparent !important;
+  background: #e8e2d8 !important;
+  color: var(--text-mute) !important;
+  box-shadow: none !important;
+  border-color: transparent !important;
   cursor: not-allowed;
-  opacity: 0.5;
 }
 
 /* ════════════════════════════════════════════════════════════
-   HOST AUTH / CONTROLS
-   ════════════════════════════════════════════════════════════ */
-
-.host-auth {
-  border-color: #ddaadd;
-  border-top: 4px solid #aa3388;
-  background: var(--bg-host);
-  margin-bottom: 1.25rem;
-}
-
-.host-controls {
-  display: flex;
-  align-items: center;
-  gap: 1rem;
-  flex-wrap: wrap;
-  margin-bottom: 2rem;
-}
-
-/* ════════════════════════════════════════════════════════════
-   VIEW SECTION — PIN付き回答確認エリア
+   VIEW SECTION — 回答一覧
    ════════════════════════════════════════════════════════════ */
 
 .view-section {
-  display: flex;
-  flex-direction: column;
-  gap: 1.25rem;
-  margin-top: 3rem;
-  padding: 1.5rem;
-  border: 3px solid #99aadd;
   border-top: 4px solid var(--blue);
-  background: #f0f4ff;
-  box-shadow: 0 2px 8px rgba(26, 79, 170, 0.08);
 }
 
 .view-section-header {
   display: flex;
   align-items: center;
   gap: 0.75rem;
-  border-bottom: 2px solid #99aadd;
-  padding-bottom: 0.6rem;
+  margin-bottom: 1rem;
+  padding-bottom: 0.75rem;
+  border-bottom: 1px solid var(--border);
 }
 
 .view-section-title {
-  font-size: 1.1rem;
+  font-size: 1rem;
   font-weight: 900;
   letter-spacing: 0.1em;
   color: var(--blue);
+  flex: 1;
+}
+
+.count-badge {
+  font-size: 0.7rem;
+  font-weight: 800;
+  color: var(--blue);
+  background: rgba(26,90,191,0.1);
+  border: 1.5px solid rgba(26,90,191,0.25);
+  padding: 0.15rem 0.6rem;
+  border-radius: 99px;
 }
 
 .view-admin {
   display: flex;
   align-items: flex-end;
-  gap: 1rem;
+  gap: 0.75rem;
   flex-wrap: wrap;
   padding-top: 1rem;
-  border-top: 2px dashed #99aadd;
-  margin-top: 0.5rem;
+  border-top: 1px dashed var(--border-md);
+  margin-top: 1rem;
 }
 
 .view-admin .field-group {
   flex: 1;
-  min-width: 140px;
+  min-width: 120px;
+  margin-bottom: 0;
+}
+
+/* ════════════════════════════════════════════════════════════
+   HOST SECTION (legacy)
+   ════════════════════════════════════════════════════════════ */
+
+.host-section,
+.host-auth {
+  background: var(--bg-card);
+  border-radius: var(--radius);
+  border-top: 4px solid #a030a0;
+  box-shadow: 0 2px 16px rgba(0,0,0,0.07);
+  padding: 1.5rem;
+  margin-bottom: 1.5rem;
+}
+
+.host-controls {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  flex-wrap: wrap;
+  margin-bottom: 1.5rem;
+}
+
+.host-badge {
+  font-size: 0.65rem;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: #a030a0;
+  font-weight: 700;
+  border: 1.5px solid #a030a0;
+  padding: 0.2rem 0.6rem;
+  border-radius: 99px;
 }
 
 /* ════════════════════════════════════════════════════════════
    QUESTION GROUPS
    ════════════════════════════════════════════════════════════ */
 
-.question-group {
-  margin-bottom: 2rem;
-}
+.question-group { margin-bottom: 1.5rem; }
 
 .group-header {
   display: flex;
   align-items: center;
   gap: 0.75rem;
-  padding: 0.6rem 0;
-  border-bottom: 3px solid var(--red);
+  padding-bottom: 0.5rem;
+  border-bottom: 2px solid var(--red);
   margin-bottom: 0.75rem;
 }
 
 .group-title {
-  font-size: 1.1rem;
+  font-size: 1rem;
   font-weight: 900;
+  color: var(--red);
   letter-spacing: 0.1em;
-  color: var(--red);
 }
 
 /* ════════════════════════════════════════════════════════════
-   HOST SECTION (legacy — 旧スタイル互換)
+   EMPTY STATE
    ════════════════════════════════════════════════════════════ */
-
-.host-section {
-  border: 3px solid #ddaadd;
-  border-top: 4px solid #aa3388;
-  padding: 1.5rem;
-  background: var(--bg-host);
-  margin-bottom: 3rem;
-  display: flex;
-  flex-direction: column;
-  gap: 1.25rem;
-  border-radius: 2px;
-}
-
-.host-header {
-  display: flex;
-  align-items: center;
-  gap: 1rem;
-  flex-wrap: wrap;
-}
-
-.host-badge {
-  font-size: 0.65rem;
-  letter-spacing: 0.25em;
-  text-transform: uppercase;
-  color: #aa3388;
-  font-weight: 700;
-  border: 2px solid #aa3388;
-  padding: 0.2rem 0.6rem;
-  border-radius: 2px;
-}
-
-.host-badge-ja {
-  font-size: 0.75rem;
-  color: var(--text-dim);
-}
-
-.host-actions {
-  display: flex;
-  gap: 1rem;
-  flex-wrap: wrap;
-}
-
-/* ════════════════════════════════════════════════════════════
-   RESPONSE SECTION
-   ════════════════════════════════════════════════════════════ */
-
-.response-section {
-  display: flex;
-  flex-direction: column;
-  gap: 1.25rem;
-}
-
-.section-header {
-  display: flex;
-  align-items: center;
-  gap: 0.75rem;
-  border-bottom: 3px solid var(--border-md);
-  padding-bottom: 0.75rem;
-}
-
-.section-title {
-  font-size: clamp(1.1rem, 4vw, 1.5rem);
-  font-weight: 900;
-  letter-spacing: 0.04em;
-  color: var(--text);
-}
-
-.count-badge {
-  font-size: 0.7rem;
-  font-weight: 800;
-  color: var(--red);
-  background: rgba(204, 26, 0, 0.08);
-  border: 2px solid rgba(204, 26, 0, 0.3);
-  padding: 0.1rem 0.5rem;
-  border-radius: 2px;
-}
 
 .empty-state {
-  color: var(--text-dark);
+  color: var(--text-mute);
   font-size: 0.85rem;
-  padding: 3rem 0;
+  padding: 2.5rem 0;
   text-align: center;
 }
 
 /* ════════════════════════════════════════════════════════════
-   RESPONSE LIST
+   RESPONSE LIST & CARDS
    ════════════════════════════════════════════════════════════ */
 
 .response-list {
   display: flex;
   flex-direction: column;
-  gap: 0.6rem;
+  gap: 0.5rem;
 }
-
-/* ════════════════════════════════════════════════════════════
-   RESPONSE CARD — クイズ番組の回答パネル
-   ════════════════════════════════════════════════════════════ */
 
 .response-card {
   display: flex;
-  border: 2px solid var(--border-md);
-  background: var(--bg-card);
+  align-items: stretch;
+  border-radius: var(--radius-sm);
   overflow: hidden;
-  border-radius: 3px;
-  transition: border-color 180ms ease, box-shadow 180ms ease;
-  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.07);
+  border: 1.5px solid var(--border);
+  background: var(--bg-card);
+  transition: border-color 150ms, box-shadow 150ms;
+  box-shadow: 0 1px 4px rgba(0,0,0,0.05);
 }
 
 .response-card:hover {
-  border-color: var(--gold-bright);
-  box-shadow: 0 2px 8px rgba(196, 125, 0, 0.15);
+  border-color: rgba(232,42,26,0.3);
+  box-shadow: 0 2px 8px rgba(232,42,26,0.1);
 }
 
 /* 番号バッジ */
 .card-num {
   flex-shrink: 0;
-  padding: 0.6rem 0.8rem;
+  min-width: 2.8rem;
+  padding: 0.65rem 0.5rem;
   font-size: 0.75rem;
   font-weight: 900;
-  letter-spacing: 0.05em;
   color: #fff;
-  background: var(--red);
-  font-variant-numeric: tabular-nums;
+  background: linear-gradient(180deg, var(--red) 0%, var(--red-dark) 100%);
   display: flex;
   align-items: center;
-  min-width: 3.2rem;
   justify-content: center;
-}
-
-/* ぼかし回答エリア */
-.card-answer-blur {
-  flex: 1;
-  padding: 0.65rem 1rem;
-  font-size: 0.95rem;
-  font-weight: 600;
-  color: var(--text);
-  background: #fff4e8;
-  border-left: 3px solid var(--border-md);
-  display: flex;
-  align-items: center;
-  filter: blur(5px);
-  user-select: none;
-  pointer-events: none;
+  font-variant-numeric: tabular-nums;
 }
 
 /* 名前プレート */
 .card-name {
-  flex: 1;
-  padding: 0.65rem 1rem;
-  font-size: 1rem;
+  padding: 0.65rem 0.9rem;
+  font-size: 0.95rem;
   font-weight: 700;
   color: var(--text);
-  line-height: 1.3;
-  background: #fff8f0;
-  border-left: 3px solid var(--border-md);
+  background: #fff9f5;
   display: flex;
   align-items: center;
+  min-width: 80px;
+  border-right: 1.5px solid var(--border);
 }
 
-/* ── 回答エリア ──────────────────────────────────────────── */
-.card-answer-wrap {
-  padding: 0;
-}
-
-/* 非表示 — ？パネル */
-.card-answer.hidden {
-  min-height: 3.5rem;
-  position: relative;
-  background: #f0f4e0;
-  border-top: 1px solid var(--border);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-.card-answer.hidden::before {
-  content: '？　？　？';
-  font-size: 1.4rem;
-  color: rgba(196, 125, 0, 0.35);
+/* マスク回答 */
+.card-answer-mask {
+  flex: 1;
+  padding: 0.65rem 1rem;
+  font-size: 0.85rem;
   font-weight: 900;
-  letter-spacing: 0.3em;
-  pointer-events: none;
+  color: #c8bca8;
+  background: #f5f0e8;
+  display: flex;
+  align-items: center;
+  letter-spacing: 0.05em;
+  user-select: none;
 }
 
-/* 表示済み — アニメーションで出現 */
-.card-answer.revealed {
-  padding: 0.9rem 1rem 1rem;
-  font-size: 1rem;
-  line-height: 1.75;
+/* 表示済み回答 */
+.card-answer-reveal {
+  flex: 1;
+  padding: 0.65rem 1rem;
+  font-size: 0.95rem;
   color: var(--text);
+  background: #fff9f5;
+  display: flex;
+  align-items: center;
   white-space: pre-wrap;
   word-break: break-word;
-  background: #fffcf0;
-  border-top: 3px solid var(--gold-bright);
-  animation: revealIn 300ms ease forwards;
+  animation: revealIn 250ms ease forwards;
 }
 
 @keyframes revealIn {
-  from {
-    opacity: 0;
-    transform: translateY(5px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
+  from { opacity: 0; transform: translateX(-6px); }
+  to   { opacity: 1; transform: translateX(0); }
 }
 
 /* ════════════════════════════════════════════════════════════
-   TOAST — 送信完了通知
+   TOAST
    ════════════════════════════════════════════════════════════ */
 
 .toast {
@@ -616,20 +468,19 @@ textarea::placeholder {
   bottom: 2rem;
   left: 50%;
   transform: translateX(-50%) translateY(120%);
-  background: var(--red);
+  background: linear-gradient(135deg, var(--red), var(--orange));
   color: #fff;
   font-size: 0.85rem;
   font-weight: 800;
-  letter-spacing: 0.1em;
-  padding: 0.7rem 1.75rem;
-  border-radius: 4px;
-  border: 2px solid var(--red-dark);
+  letter-spacing: 0.12em;
+  padding: 0.7rem 2rem;
+  border-radius: 99px;
   z-index: 2000;
   pointer-events: none;
   opacity: 0;
-  transition: transform 220ms ease, opacity 220ms ease;
+  transition: transform 220ms cubic-bezier(0.34, 1.56, 0.64, 1), opacity 220ms ease;
   white-space: nowrap;
-  box-shadow: 0 3px 12px rgba(204, 26, 0, 0.4);
+  box-shadow: 0 4px 20px rgba(232,42,26,0.4);
 }
 
 .toast.show {
@@ -638,26 +489,13 @@ textarea::placeholder {
 }
 
 /* ════════════════════════════════════════════════════════════
-   RESPONSIVE / MOBILE
+   RESPONSIVE
    ════════════════════════════════════════════════════════════ */
 
 @media (max-width: 480px) {
-  .host-actions {
-    flex-direction: column;
-  }
-
-  .view-controls {
-    flex-direction: column;
-    align-items: flex-start;
-  }
-
-  .btn {
-    font-size: 0.85rem;
-  }
-
-  .card-name {
-    font-size: 0.95rem;
-  }
+  .view-admin { flex-direction: column; align-items: stretch; }
+  .btn { font-size: 0.85rem; }
+  .card-name { font-size: 0.9rem; }
 }
 
 /* ════════════════════════════════════════════════════════════
@@ -665,10 +503,6 @@ textarea::placeholder {
    ════════════════════════════════════════════════════════════ */
 
 @media (prefers-reduced-motion: reduce) {
-  .card-answer.revealed {
-    animation: none;
-  }
-  * {
-    transition-duration: 0.01ms !important;
-  }
+  .card-answer-reveal { animation: none; }
+  * { transition-duration: 0.01ms !important; }
 }
