@@ -10,17 +10,11 @@ import {
   initializeFirestore,
   memoryLocalCache,
   collection,
-  deleteDoc,
-  getDocs,
-  doc,
   onSnapshot,
   query,
   orderBy,
 } from 'https://www.gstatic.com/firebasejs/10.14.0/firebase-firestore.js';
 
-// ════════════════════════════════════════════════════════════════════════════
-// ▼ Firebase 設定
-// ════════════════════════════════════════════════════════════════════════════
 const firebaseConfig = {
   apiKey:            "AIzaSyCFZpA_Js2i7gwdAPWMytn5g2z9UO7werU",
   authDomain:        "syukeishimasu.firebaseapp.com",
@@ -29,35 +23,17 @@ const firebaseConfig = {
   messagingSenderId: "644450424989",
   appId:             "1:644450424989:web:cb5af754ddbaf0838f5c74",
 };
-// ════════════════════════════════════════════════════════════════════════════
-
-/** 管理PIN */
-const HOST_PIN = "1234";
 
 const fbApp = initializeApp(firebaseConfig);
 const db    = initializeFirestore(fbApp, { localCache: memoryLocalCache() });
 
-// ── 回答送信 DOM refs ─────────────────────────────────────────────────────────
+// ── 回答送信 ──────────────────────────────────────────────────────────────────
 const nameInput   = document.getElementById('name-input');
 const answerInput = document.getElementById('answer-input');
 const submitBtn   = document.getElementById('submit-btn');
 const errorMsg    = document.getElementById('error-msg');
 const toast       = document.getElementById('toast');
 
-// ── 回答一覧 DOM refs ─────────────────────────────────────────────────────────
-const viewPinInput     = document.getElementById('view-pin-input');
-const viewToggleBtn    = document.getElementById('view-toggle-btn');
-const viewDeleteBtn    = document.getElementById('view-delete-btn');
-const viewCountDisplay = document.getElementById('view-count-display');
-const viewGroupedList  = document.getElementById('view-grouped-list');
-
-// ── State ─────────────────────────────────────────────────────────────────────
-let viewAuthenticated = false;
-let viewRevealed      = false;
-/** @type {{ id: string, name: string }[]} */
-let allResponses      = [];
-
-// ── Submit（REST API で書き込み） ─────────────────────────────────────────────
 async function postResponse(name, answer) {
   const { projectId, apiKey } = fbApp.options;
   const url =
@@ -85,7 +61,6 @@ async function postResponse(name, answer) {
 submitBtn.addEventListener('click', async () => {
   const name   = nameInput.value.trim();
   const answer = answerInput.value.trim();
-
   errorMsg.textContent = '';
 
   if (!name || !answer) {
@@ -109,7 +84,6 @@ submitBtn.addEventListener('click', async () => {
   }
 });
 
-// ── Toast ─────────────────────────────────────────────────────────────────────
 let toastTimer = null;
 function showToast() {
   toast.classList.add('show');
@@ -117,54 +91,14 @@ function showToast() {
   toastTimer = setTimeout(() => toast.classList.remove('show'), 2500);
 }
 
-// ── PIN validation ────────────────────────────────────────────────────────────
-viewPinInput.addEventListener('input', () => {
-  viewAuthenticated = (viewPinInput.value === HOST_PIN);
-  viewToggleBtn.disabled = !viewAuthenticated;
-  viewDeleteBtn.disabled = !viewAuthenticated;
+// ── 回答一覧（名前＋マスク表示） ─────────────────────────────────────────────
+const viewCountDisplay = document.getElementById('view-count-display');
+const viewGroupedList  = document.getElementById('view-grouped-list');
 
-  if (!viewAuthenticated && viewRevealed) {
-    viewRevealed = false;
-    updateToggleLabel();
-    renderViewList();
-  }
-});
+/** @type {{ id: string, name: string, answer: string }[]} */
+let allResponses = [];
 
-// ── Toggle reveal ─────────────────────────────────────────────────────────────
-viewToggleBtn.addEventListener('click', () => {
-  if (!viewAuthenticated) return;
-  viewRevealed = !viewRevealed;
-  updateToggleLabel();
-  renderViewList();
-});
-
-function updateToggleLabel() {
-  viewToggleBtn.textContent = viewRevealed ? '回答を隠す' : '回答を表示';
-}
-
-// ── Delete all ────────────────────────────────────────────────────────────────
-viewDeleteBtn.addEventListener('click', async () => {
-  if (!viewAuthenticated) return;
-  if (!confirm('全件削除しますか？この操作は取り消せません。')) return;
-
-  viewDeleteBtn.disabled = true;
-
-  try {
-    const snap = await getDocs(collection(db, 'responses'));
-    await Promise.all(snap.docs.map(d => deleteDoc(doc(db, 'responses', d.id))));
-  } catch (err) {
-    alert('削除に失敗しました。');
-    console.error('[app] deleteDoc error:', err);
-  } finally {
-    viewDeleteBtn.disabled = !viewAuthenticated;
-  }
-});
-
-// ── Realtime listener ─────────────────────────────────────────────────────────
-const q = query(
-  collection(db, 'responses'),
-  orderBy('createdAt', 'asc'),
-);
+const q = query(collection(db, 'responses'), orderBy('createdAt', 'asc'));
 
 onSnapshot(q, (snapshot) => {
   allResponses = snapshot.docs.map(d => ({
@@ -174,13 +108,12 @@ onSnapshot(q, (snapshot) => {
   }));
 
   viewCountDisplay.textContent = `${allResponses.length} 件`;
-  renderViewList();
+  renderList();
 }, (err) => {
   console.error('[app] onSnapshot error:', err);
 });
 
-// ── Render（名前のみ、設問グループなし） ──────────────────────────────────────
-function renderViewList() {
+function renderList() {
   while (viewGroupedList.firstChild) {
     viewGroupedList.removeChild(viewGroupedList.firstChild);
   }
@@ -208,16 +141,11 @@ function renderViewList() {
     nameEl.className   = 'card-name';
     nameEl.textContent = r.name;
 
-    const answerEl = document.createElement('div');
-    if (viewRevealed) {
-      answerEl.className   = 'card-answer-reveal';
-      answerEl.textContent = r.answer || '（空白）';
-    } else {
-      answerEl.className   = 'card-answer-mask';
-      answerEl.textContent = '██████████';
-    }
+    const maskEl = document.createElement('div');
+    maskEl.className   = 'card-answer-mask';
+    maskEl.textContent = '██████████';
 
-    card.append(numEl, nameEl, answerEl);
+    card.append(numEl, nameEl, maskEl);
     list.appendChild(card);
   });
 

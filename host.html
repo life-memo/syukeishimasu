@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>主催者ページ</title>
+  <title>管理画面</title>
   <link rel="stylesheet" href="styles.css">
 </head>
 <body>
@@ -11,15 +11,16 @@
   <div class="container">
 
     <header class="site-header">
-      <h1 class="site-title">主催者ページ</h1>
+      <p class="eyebrow">ADMIN</p>
+      <h1 class="site-title">管理画面</h1>
     </header>
 
     <main>
 
       <!-- PIN認証 -->
-      <section class="form-section host-auth" aria-label="主催者認証">
-        <div class="field-group">
-          <label class="field-label field-label--magenta" for="pin-input">主催者PIN</label>
+      <section class="form-section" aria-label="認証">
+        <div class="field-group" style="margin-bottom:0">
+          <label class="field-label field-label--pin" for="pin-input">管理PIN</label>
           <input
             type="password"
             id="pin-input"
@@ -30,17 +31,22 @@
         </div>
       </section>
 
-      <!-- コントロール -->
-      <div class="host-controls">
-        <button class="btn btn-accent"  id="toggle-btn"     disabled>回答をすべて表示</button>
-        <button class="btn btn-danger"  id="delete-all-btn" disabled>全削除</button>
-        <span   class="count-badge"    id="count-display"  aria-live="polite">— 件</span>
-      </div>
+      <!-- 回答一覧 -->
+      <section class="view-section" aria-label="回答一覧">
+        <div class="view-section-header">
+          <h2 class="view-section-title">回答一覧</h2>
+          <span class="count-badge" id="count-display" aria-live="polite">— 件</span>
+        </div>
 
-      <!-- 設問グループ別回答一覧 -->
-      <div id="grouped-list">
-        <p class="empty-state">まだ投稿がありません</p>
-      </div>
+        <div id="grouped-list">
+          <p class="empty-state">まだ投稿がありません</p>
+        </div>
+
+        <div class="view-admin">
+          <button class="btn btn-accent" id="toggle-btn"     disabled>回答を表示</button>
+          <button class="btn btn-danger" id="delete-all-btn" disabled>全削除</button>
+        </div>
+      </section>
 
     </main>
 

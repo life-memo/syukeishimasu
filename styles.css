@@ -306,6 +306,11 @@ input::placeholder, textarea::placeholder { color: var(--text-mute); }
   margin-bottom: 0;
 }
 
+/* host.html では field-group なしでボタンだけ */
+.view-admin:not(:has(.field-group)) {
+  padding-top: 1rem;
+}
+
 /* ════════════════════════════════════════════════════════════
    HOST SECTION (legacy)
    ════════════════════════════════════════════════════════════ */
