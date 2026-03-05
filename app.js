@@ -100,7 +100,6 @@ submitBtn.addEventListener('click', async () => {
 
     // 回答欄だけクリア（名前は残して次の送信を楽に）
     answerInput.value = '';
-    answerInput.focus();
     showToast();
 
   } catch (err) {
