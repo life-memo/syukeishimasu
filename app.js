@@ -38,12 +38,11 @@ const fbApp = initializeApp(firebaseConfig);
 const db    = initializeFirestore(fbApp, { localCache: memoryLocalCache() });
 
 // ── 回答送信 DOM refs ─────────────────────────────────────────────────────────
-const nameInput      = document.getElementById('name-input');
-const questionSelect = document.getElementById('question-select');
-const answerInput    = document.getElementById('answer-input');
-const submitBtn      = document.getElementById('submit-btn');
-const errorMsg       = document.getElementById('error-msg');
-const toast          = document.getElementById('toast');
+const nameInput   = document.getElementById('name-input');
+const answerInput = document.getElementById('answer-input');
+const submitBtn   = document.getElementById('submit-btn');
+const errorMsg    = document.getElementById('error-msg');
+const toast       = document.getElementById('toast');
 
 // ── 回答一覧 DOM refs ─────────────────────────────────────────────────────────
 const viewPinInput     = document.getElementById('view-pin-input');
@@ -57,7 +56,7 @@ let viewAuthenticated = false;
 let allResponses      = [];
 
 // ── Submit（REST API で書き込み） ─────────────────────────────────────────────
-async function postResponse(name, questionNumber, answer) {
+async function postResponse(name, answer) {
   const { projectId, apiKey } = fbApp.options;
   const url =
     `https://firestore.googleapis.com/v1/projects/${projectId}` +
@@ -68,10 +67,9 @@ async function postResponse(name, questionNumber, answer) {
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({
       fields: {
-        name:           { stringValue: name },
-        questionNumber: { integerValue: questionNumber },
-        answer:         { stringValue: answer },
-        createdAt:      { timestampValue: new Date().toISOString() },
+        name:      { stringValue: name },
+        answer:    { stringValue: answer },
+        createdAt: { timestampValue: new Date().toISOString() },
       },
     }),
   });
@@ -83,9 +81,8 @@ async function postResponse(name, questionNumber, answer) {
 }
 
 submitBtn.addEventListener('click', async () => {
-  const name           = nameInput.value.trim();
-  const questionNumber = parseInt(questionSelect.value, 10);
-  const answer         = answerInput.value.trim();
+  const name   = nameInput.value.trim();
+  const answer = answerInput.value.trim();
 
   errorMsg.textContent = '';
 
@@ -98,7 +95,7 @@ submitBtn.addEventListener('click', async () => {
   submitBtn.textContent = '送信中…';
 
   try {
-    await postResponse(name, questionNumber, answer);
+    await postResponse(name, answer);
     answerInput.value = '';
     showToast();
   } catch (err) {
@@ -150,8 +147,9 @@ const q = query(
 
 onSnapshot(q, (snapshot) => {
   allResponses = snapshot.docs.map(d => ({
-    id:   d.id,
-    name: d.data().name ?? '',
+    id:     d.id,
+    name:   d.data().name   ?? '',
+    answer: d.data().answer ?? '',
   }));
 
   viewCountDisplay.textContent = `${allResponses.length} 件`;
@@ -189,7 +187,11 @@ function renderViewList() {
     nameEl.className   = 'card-name';
     nameEl.textContent = r.name;
 
-    card.append(numEl, nameEl);
+    const answerEl = document.createElement('div');
+    answerEl.className   = 'card-answer-blur';
+    answerEl.textContent = r.answer || '（回答あり）';
+
+    card.append(numEl, nameEl, answerEl);
     list.appendChild(card);
   });
 

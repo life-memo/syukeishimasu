@@ -528,6 +528,22 @@ textarea::placeholder {
   justify-content: center;
 }
 
+/* ぼかし回答エリア */
+.card-answer-blur {
+  flex: 1;
+  padding: 0.65rem 1rem;
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: var(--text);
+  background: #fff4e8;
+  border-left: 3px solid var(--border-md);
+  display: flex;
+  align-items: center;
+  filter: blur(5px);
+  user-select: none;
+  pointer-events: none;
+}
+
 /* 名前プレート */
 .card-name {
   flex: 1;
