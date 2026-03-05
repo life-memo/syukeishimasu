@@ -10,7 +10,8 @@ import { initializeApp } from
   'https://www.gstatic.com/firebasejs/10.14.0/firebase-app.js';
 
 import {
-  getFirestore,
+  initializeFirestore,
+  memoryLocalCache,
   collection,
   addDoc,
   deleteDoc,
@@ -40,7 +41,9 @@ const HOST_PIN = "1234";
 
 // ── Firebase 初期化 ──────────────────────────────────────────────────────────
 const fbApp = initializeApp(firebaseConfig);
-const db    = getFirestore(fbApp);
+// memoryLocalCache: IndexedDB によるオフライン永続化を無効化。
+// iOS Safari で IndexedDB がハングし addDoc が永遠に pending になる問題を回避。
+const db = initializeFirestore(fbApp, { localCache: memoryLocalCache() });
 
 // ── State ────────────────────────────────────────────────────────────────────
 let isAuthenticated = false;   // 正しい PIN が入力されているか
