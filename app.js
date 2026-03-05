@@ -90,23 +90,40 @@ submitBtn.addEventListener('click', async () => {
   }
 
   submitBtn.disabled = true;
+  submitBtn.textContent = '送信中…';
+
+  // タイムアウト: 8秒以内にサーバー応答がなければ強制的にエラー扱い
+  // （Firebase addDoc はサーバーACKを待つため、接続不安定時にハングする）
+  let timeoutId;
+  const timeoutPromise = new Promise((_, reject) => {
+    timeoutId = setTimeout(() => reject(new Error('timeout')), 8000);
+  });
 
   try {
-    await addDoc(collection(db, 'responses'), {
-      name,
-      answer,
-      createdAt: serverTimestamp(),
-    });
+    await Promise.race([
+      addDoc(collection(db, 'responses'), {
+        name,
+        answer,
+        createdAt: serverTimestamp(),
+      }),
+      timeoutPromise,
+    ]);
 
-    // 回答欄だけクリア（名前は残して次の送信を楽に）
+    clearTimeout(timeoutId);
     answerInput.value = '';
     showToast();
 
   } catch (err) {
-    errorMsg.textContent = '送信に失敗しました。ネットワークを確認してください。';
+    clearTimeout(timeoutId);
+    if (err.message === 'timeout') {
+      errorMsg.textContent = '送信がタイムアウトしました。ネットワークを確認してもう一度お試しください。';
+    } else {
+      errorMsg.textContent = `送信に失敗しました（${err.code ?? err.message}）`;
+    }
     console.error('[app] addDoc error:', err);
   } finally {
     submitBtn.disabled = false;
+    submitBtn.textContent = '送信';
   }
 });
 
