@@ -565,6 +565,150 @@ textarea::placeholder { color: var(--text-mute); }
 }
 
 /* ════════════════════════════════════════════════════════════
+   HOST PAGE — PC グリッド表示
+   ════════════════════════════════════════════════════════════ */
+
+/* コンテナをフル幅に */
+.host-page .container {
+  max-width: none;
+  padding: 0 0 4rem;
+}
+
+@media (min-width: 640px) {
+  .host-page .container {
+    padding: 1.5rem 1.5rem 4rem;
+  }
+}
+
+/* ── PC グリッド (≥768px) ─────────────────────────────────── */
+@media (min-width: 768px) {
+
+  .host-page .view-section {
+    border: none;
+    background: transparent;
+    box-shadow: none;
+    padding: 0;
+  }
+
+  .host-page .view-section-header {
+    padding: 0 0 0.75rem;
+    margin-bottom: 1rem;
+    border-bottom: 2px solid var(--border);
+  }
+
+  /* グリッド本体 */
+  .host-page .response-list {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 4px;
+    background: #444;  /* ← グリッド線の色 */
+    border: 4px solid #444;
+    border-radius: var(--r-sm);
+    overflow: hidden;
+  }
+
+  /* 各カード */
+  .host-page .response-card {
+    flex-direction: column;
+    aspect-ratio: 4 / 3;
+    border: none;
+    border-radius: 0;
+    box-shadow: none;
+    background: #2C2C2C;
+    transition: none;
+  }
+
+  .host-page .response-card:hover {
+    transform: none;
+    box-shadow: none;
+    border: none;
+  }
+
+  /* 番号バッジを非表示 */
+  .host-page .card-num {
+    display: none;
+  }
+
+  /* 回答エリア（大） */
+  .host-page .card-answer-mask,
+  .host-page .card-answer-reveal {
+    flex: 1;
+    order: 1;
+    padding: 0.75rem 1rem;
+    font-size: clamp(1.6rem, 2.8vw, 3rem);
+    font-weight: 900;
+    background: #2C2C2C;
+    color: #fff;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    white-space: pre-wrap;
+    word-break: break-word;
+    line-height: 1.2;
+    min-height: unset;
+  }
+
+  /* マスク時は暗め */
+  .host-page .card-answer-mask {
+    background: #1A1A1A;
+    color: transparent;
+    font-size: 0;
+  }
+
+  .host-page .card-answer-mask::after {
+    content: '?';
+    font-size: clamp(2rem, 4vw, 4rem);
+    font-weight: 900;
+    color: rgba(255,255,255,0.15);
+    letter-spacing: 0;
+  }
+
+  /* 名前バー（下） */
+  .host-page .card-name {
+    order: 2;
+    min-width: unset;
+    border-right: none;
+    border-top: 1px solid rgba(255,255,255,0.08);
+    background: #111;
+    color: rgba(255,255,255,0.65);
+    font-size: 0.75rem;
+    font-weight: 700;
+    letter-spacing: 0.12em;
+    justify-content: center;
+    text-align: center;
+    padding: 0.45rem 0.5rem;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  /* 表示アニメーション */
+  .host-page .card-answer-reveal {
+    animation: gridReveal 320ms cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+  }
+
+  @keyframes gridReveal {
+    from { opacity: 0; transform: scale(0.85); }
+    to   { opacity: 1; transform: scale(1); }
+  }
+}
+
+/* 3列（中間） */
+@media (min-width: 768px) and (max-width: 1099px) {
+  .host-page .response-list {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+/* 4列（広め） */
+@media (min-width: 1100px) {
+  .host-page .response-list {
+    grid-template-columns: repeat(4, 1fr);
+  }
+}
+
+/* ════════════════════════════════════════════════════════════
    HOST SECTION (legacy classes kept for safety)
    ════════════════════════════════════════════════════════════ */
 
