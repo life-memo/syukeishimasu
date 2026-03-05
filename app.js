@@ -59,6 +59,7 @@ const toggleBtn     = document.getElementById('toggle-btn');
 const deleteAllBtn  = document.getElementById('delete-all-btn');
 const responseList  = document.getElementById('response-list');
 const countDisplay  = document.getElementById('count-display');
+const toast         = document.getElementById('toast');
 
 // ── PIN validation ───────────────────────────────────────────────────────────
 pinInput.addEventListener('input', () => {
@@ -97,10 +98,10 @@ submitBtn.addEventListener('click', async () => {
       createdAt: serverTimestamp(),
     });
 
-    nameInput.value   = '';
+    // 回答欄だけクリア（名前は残して次の送信を楽に）
     answerInput.value = '';
-    successMsg.textContent = '送信しました！';
-    setTimeout(clearMessages, 3000);
+    answerInput.focus();
+    showToast();
 
   } catch (err) {
     errorMsg.textContent = '送信に失敗しました。ネットワークを確認してください。';
@@ -217,6 +218,13 @@ function renderList() {
 function clearMessages() {
   errorMsg.textContent   = '';
   successMsg.textContent = '';
+}
+
+let toastTimer = null;
+function showToast() {
+  toast.classList.add('show');
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(() => toast.classList.remove('show'), 2500);
 }
 
 // ── Init ─────────────────────────────────────────────────────────────────────

@@ -138,12 +138,11 @@ body {
 }
 
 .site-title {
-  font-size: clamp(3.5rem, 13vw, 7rem);
+  font-size: clamp(1.6rem, 5vw, 2.4rem);
   font-weight: 900;
-  line-height: 0.85;
-  letter-spacing: -0.04em;
+  line-height: 1.1;
+  letter-spacing: -0.02em;
   color: var(--text);
-  /* Aggressive editorial tracking */
 }
 
 /* ════════════════════════════════════════════════════════════
@@ -567,6 +566,41 @@ textarea::placeholder {
   .side-label {
     display: none;
   }
+}
+
+/* ════════════════════════════════════════════════════════════
+   TOAST — 送信完了通知
+   ════════════════════════════════════════════════════════════ */
+
+.toast {
+  position: fixed;
+  bottom: 2rem;
+  left: 50%;
+  transform: translateX(-50%) translateY(120%);
+  background: var(--lime);
+  color: #060606;
+  font-size: 0.8rem;
+  font-weight: 900;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  padding: 0.75rem 1.75rem;
+  clip-path: polygon(
+    0 0,
+    calc(100% - 8px) 0,
+    100% 8px,
+    100% 100%,
+    8px 100%,
+    0 calc(100% - 8px)
+  );
+  z-index: 2000;
+  pointer-events: none;
+  opacity: 0;
+  transition: transform 220ms ease, opacity 220ms ease;
+}
+
+.toast.show {
+  opacity: 1;
+  transform: translateX(-50%) translateY(0);
 }
 
 /* ════════════════════════════════════════════════════════════
