@@ -15,12 +15,12 @@ import {
 // ▼ Firebase 設定（ここを Firebase Console の値に書き換えてください）
 // ════════════════════════════════════════════════════════════════════════════
 const firebaseConfig = {
-  apiKey:            "YOUR_API_KEY",
-  authDomain:        "YOUR_PROJECT_ID.firebaseapp.com",
-  projectId:         "YOUR_PROJECT_ID",
-  storageBucket:     "YOUR_PROJECT_ID.appspot.com",
-  messagingSenderId: "YOUR_MESSAGING_SENDER_ID",
-  appId:             "YOUR_APP_ID",
+  apiKey:            "AIzaSyCFZpA_Js2i7gwdAPWMytn5g2z9UO7werU",
+  authDomain:        "syukeishimasu.firebaseapp.com",
+  projectId:         "syukeishimasu",
+  storageBucket:     "syukeishimasu.firebasestorage.app",
+  messagingSenderId: "644450424989",
+  appId:             "1:644450424989:web:cb5af754ddbaf0838f5c74",
 };
 // ════════════════════════════════════════════════════════════════════════════
 
