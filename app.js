@@ -143,7 +143,7 @@ function renderList() {
 
     const maskEl = document.createElement('div');
     maskEl.className   = 'card-answer-mask';
-    maskEl.textContent = '██████████';
+    maskEl.textContent = `${r.name}さんから回答がありました！`;
 
     card.append(numEl, nameEl, maskEl);
     list.appendChild(card);

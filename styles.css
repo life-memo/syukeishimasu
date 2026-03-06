@@ -679,12 +679,12 @@ textarea::placeholder { color: var(--text-mute); }
     border-top: 1px solid rgba(255,255,255,0.08);
     background: #111;
     color: rgba(255,255,255,0.9);
-    font-size: 0.75rem;
+    font-size: clamp(0.9rem, 1.4vw, 1.2rem);
     font-weight: 700;
-    letter-spacing: 0.12em;
+    letter-spacing: 0.05em;
     justify-content: center;
     text-align: center;
-    padding: 0.45rem 0.5rem;
+    padding: 0.55rem 0.5rem;
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
