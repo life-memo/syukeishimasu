@@ -139,7 +139,7 @@ function renderList() {
       answerEl.textContent = r.answer || '（空白）';
     } else {
       answerEl.className   = 'card-answer-mask';
-      answerEl.textContent = `${r.name}さんから回答がありました！`;
+      answerEl.textContent = '回答済み ✓';
     }
 
     card.append(numEl, nameEl, answerEl);
