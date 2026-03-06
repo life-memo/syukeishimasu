@@ -440,42 +440,24 @@ textarea::placeholder { color: var(--text-mute); }
   border-right: 1.5px solid var(--border);
 }
 
-/* マスク — 黒塗りスタイル */
+/* マスク — 回答待ち表示 */
 .card-answer-mask {
   flex: 1;
   min-height: 2.75rem;
   background: #1C1A18;
   display: flex;
   align-items: center;
-  justify-content: center;
+  justify-content: flex-start;
+  padding: 0.7rem 1rem;
   position: relative;
   overflow: hidden;
-  /* テキスト（█）を隠す */
-  color: transparent;
-  font-size: 0;
-}
-
-.card-answer-mask::before {
-  content: '';
-  position: absolute;
-  inset: 0;
-  background: repeating-linear-gradient(
-    -50deg,
-    transparent 0px,
-    transparent 5px,
-    rgba(255,255,255,0.03) 5px,
-    rgba(255,255,255,0.03) 6px
-  );
+  color: rgba(255,255,255,0.85);
+  font-size: 0.9rem;
+  font-weight: 600;
 }
 
 .card-answer-mask::after {
-  content: 'SECRET';
-  position: absolute;
-  font-size: 0.52rem;
-  font-weight: 900;
-  letter-spacing: 0.55em;
-  color: rgba(255,255,255,0.18);
-  pointer-events: none;
+  display: none;
 }
 
 /* 表示済み回答 */
@@ -679,6 +661,9 @@ textarea::placeholder { color: var(--text-mute); }
   }
 
   .host-page .card-answer-mask::after {
+    display: flex;
+    align-items: center;
+    justify-content: center;
     content: '?';
     font-size: clamp(2rem, 4vw, 4rem);
     font-weight: 900;
