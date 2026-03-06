@@ -693,7 +693,7 @@ textarea::placeholder { color: var(--text-mute); }
     border-right: none;
     border-top: 1px solid rgba(255,255,255,0.08);
     background: #111;
-    color: rgba(255,255,255,0.65);
+    color: rgba(255,255,255,0.9);
     font-size: 0.75rem;
     font-weight: 700;
     letter-spacing: 0.12em;
