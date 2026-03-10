@@ -412,6 +412,15 @@ textarea::placeholder { color: var(--text-mute); }
   transform: translateY(-1px);
 }
 
+.response-card--selectable {
+  cursor: pointer;
+}
+
+.response-card--selectable:hover {
+  border-color: rgba(0,64,200,0.4);
+  box-shadow: 0 3px 14px rgba(0,64,200,0.15);
+}
+
 /* 番号バッジ */
 .card-num {
   flex-shrink: 0;
@@ -626,6 +635,18 @@ textarea::placeholder { color: var(--text-mute); }
     transform: none;
     box-shadow: none;
     border: none;
+  }
+
+  .host-page .response-card--selectable {
+    cursor: pointer;
+  }
+
+  .host-page .response-card--selectable:hover .card-answer-mask {
+    background: #2A2A2A;
+  }
+
+  .host-page .response-card--selectable:hover .card-answer-mask::after {
+    color: rgba(255,255,255,0.35);
   }
 
   /* 番号バッジを非表示 */

@@ -42,6 +42,7 @@ const countDisplay = document.getElementById('count-display');
 // ── State ─────────────────────────────────────────────────────────────────────
 let isAuthenticated = false;
 let isRevealed      = false;
+let revealedIds     = new Set(); // 個別に表示したカードのID
 /** @type {{ id: string, name: string, answer: string }[]} */
 let allResponses    = [];
 
@@ -51,8 +52,9 @@ pinInput.addEventListener('input', () => {
   toggleBtn.disabled    = !isAuthenticated;
   deleteAllBtn.disabled = !isAuthenticated;
 
-  if (!isAuthenticated && isRevealed) {
+  if (!isAuthenticated) {
     isRevealed = false;
+    revealedIds.clear();
     updateToggleLabel();
     renderList();
   }
@@ -133,13 +135,27 @@ function renderList() {
     nameEl.className   = 'card-name';
     nameEl.textContent = r.name;
 
+    const cardRevealed = isAuthenticated && (isRevealed || revealedIds.has(r.id));
+
     const answerEl = document.createElement('div');
-    if (isAuthenticated && isRevealed) {
+    if (cardRevealed) {
       answerEl.className   = 'card-answer-reveal';
       answerEl.textContent = r.answer || '（空白）';
     } else {
       answerEl.className   = 'card-answer-mask';
       answerEl.textContent = '回答済み ✓';
+    }
+
+    if (isAuthenticated && !isRevealed) {
+      card.classList.add('response-card--selectable');
+      card.addEventListener('click', () => {
+        if (revealedIds.has(r.id)) {
+          revealedIds.delete(r.id);
+        } else {
+          revealedIds.add(r.id);
+        }
+        renderList();
+      });
     }
 
     card.append(numEl, nameEl, answerEl);
