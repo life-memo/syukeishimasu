@@ -56,8 +56,8 @@ pinInput.addEventListener('input', () => {
     isRevealed = false;
     revealedIds.clear();
     updateToggleLabel();
-    renderList();
   }
+  renderList();
 });
 
 // ── Toggle reveal ─────────────────────────────────────────────────────────────
